@@ -20,7 +20,7 @@
  *
  * @category    Mage
  * @package     Mage_ImportExport
- * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
@@ -96,9 +96,7 @@ abstract class Mage_ImportExport_Model_Import_Entity_Product_Type_Abstract
      * Object constructor.
      *
      * @param array $params
-     * @param string $type Product type (simple, configurable, etc.)
      * @throws Exception
-     * @return void
      */
     final public function __construct(array $params)
     {
@@ -113,7 +111,12 @@ abstract class Mage_ImportExport_Model_Import_Entity_Product_Type_Abstract
             foreach ($this->_messageTemplates as $errorCode => $message) {
                 $this->_entityModel->addMessageTemplate($errorCode, $message);
             }
-            $this->_initAttributes();
+
+            if (isset($params['attributes'])) {
+                $this->_attributes = $params['attributes'];
+            } else {
+                $this->_initAttributes();
+            }
         }
     }
 
@@ -240,10 +243,10 @@ abstract class Mage_ImportExport_Model_Import_Entity_Product_Type_Abstract
      *
      * @param array $rowData
      * @param int $rowNum
-     * @param boolean $checkRequiredAttributes OPTIONAL Flag which can disable validation required values.
+     * @param boolean $isNewProduct OPTIONAL.
      * @return boolean
      */
-    public function isRowValid(array $rowData, $rowNum, $checkRequiredAttributes = true)
+    public function isRowValid(array $rowData, $rowNum, $isNewProduct = true)
     {
         $error    = false;
         $rowScope = $this->_entityModel->getRowScope($rowData);
@@ -255,14 +258,17 @@ abstract class Mage_ImportExport_Model_Import_Entity_Product_Type_Abstract
                     $error |= !$this->_entityModel->isAttributeValid($attrCode, $attrParams, $rowData, $rowNum);
                 } elseif (
                     $this->_isAttributeRequiredCheckNeeded($attrCode)
-                    && $checkRequiredAttributes
-                    && Mage_ImportExport_Model_Import_Entity_Product::SCOPE_DEFAULT == $rowScope
-                    && $attrParams['is_required']
-                ) {
-                    $this->_entityModel->addRowError(
-                        Mage_ImportExport_Model_Import_Entity_Product::ERROR_VALUE_IS_REQUIRED, $rowNum, $attrCode
-                    );
-                    $error = true;
+                    && $attrParams['is_required']) {
+                        // For the default scope - if this is a new product or
+                        // for an old product, if the imported doc has the column present for the attrCode
+                        if (Mage_ImportExport_Model_Import_Entity_Product::SCOPE_DEFAULT == $rowScope &&
+                            ($isNewProduct || array_key_exists($attrCode, $rowData))) {
+                            $this->_entityModel->addRowError(
+                                Mage_ImportExport_Model_Import_Entity_Product::ERROR_VALUE_IS_REQUIRED,
+                                    $rowNum, $attrCode
+                            );
+                            $error = true;
+                        }
                 }
             }
         }
@@ -285,9 +291,10 @@ abstract class Mage_ImportExport_Model_Import_Entity_Product_Type_Abstract
      * Prepare attributes values for save: remove non-existent, remove empty values, remove static.
      *
      * @param array $rowData
+     * @param bool $withDefaultValue
      * @return array
      */
-    public function prepareAttributesForSave(array $rowData)
+    public function prepareAttributesForSave(array $rowData, $withDefaultValue = true)
     {
         $resultAttrs = array();
 
@@ -298,9 +305,7 @@ abstract class Mage_ImportExport_Model_Import_Entity_Product_Type_Abstract
                         ('select' == $attrParams['type'] || 'multiselect' == $attrParams['type'])
                         ? $attrParams['options'][strtolower($rowData[$attrCode])]
                         : $rowData[$attrCode];
-                } elseif (array_key_exists($attrCode, $rowData)) {
-                    $resultAttrs[$attrCode] = $rowData[$attrCode];
-                } elseif (null !== $attrParams['default_value']) {
+                } elseif ($withDefaultValue && null !== $attrParams['default_value']) {
                     $resultAttrs[$attrCode] = $attrParams['default_value'];
                 }
             }

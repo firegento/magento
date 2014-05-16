@@ -20,7 +20,7 @@
  *
  * @category    Mage
  * @package     Mage_Sales
- * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
@@ -368,7 +368,6 @@ class Mage_Sales_Model_Order_Item extends Mage_Core_Model_Abstract
         if ($this->isDummy()) {
             return 0;
         }
-
         return max($this->getQtyInvoiced()-$this->getQtyRefunded(), 0);
     }
 
@@ -379,8 +378,47 @@ class Mage_Sales_Model_Order_Item extends Mage_Core_Model_Abstract
      */
     public function getQtyToCancel()
     {
-        $qtyToCancel = min($this->getQtyToInvoice(), $this->getQtyToShip());
+        if ($this->getProductType() == Mage_Catalog_Model_Product_Type::TYPE_BUNDLE) {
+            $qtyToCancel = $this->getQtyToCancelBundle();
+        } elseif ($this->getParentItem()
+            && $this->getParentItem()->getProductType() == Mage_Catalog_Model_Product_Type::TYPE_BUNDLE
+        ) {
+            $qtyToCancel = $this->getQtyToCancelBundleItem();
+        } else {
+            $qtyToCancel = min($this->getQtyToInvoice(), $this->getQtyToShip());
+        }
         return max($qtyToCancel, 0);
+    }
+
+    /**
+     * Retrieve Bundle item qty available for cancel
+     * getQtyToInvoice() will always deliver 0 for Bundle
+     *
+     * @return float|integer
+     */
+    public function getQtyToCancelBundle()
+    {
+        if ($this->isDummy()) {
+            $qty = $this->getQtyOrdered()
+                - $this->getQtyInvoiced()
+                - $this->getQtyCanceled();
+            return min(max($qty, 0), $this->getQtyToShip());
+        }
+        return min($this->getQtyToInvoice(), $this->getQtyToShip());
+    }
+
+    /**
+     * Retrieve Bundle child item qty available for cancel
+     * getQtyToShip() always returns 0 for BundleItems that ship together
+     *
+     * @return float|integer
+     */
+    public function getQtyToCancelBundleItem()
+    {
+        if ($this->isDummy(true)) {
+            return min($this->getQtyToInvoice(), $this->getSimpleQtyToShip());
+        }
+        return min($this->getQtyToInvoice(), $this->getQtyToShip());
     }
 
     /**
@@ -511,8 +549,14 @@ class Mage_Sales_Model_Order_Item extends Mage_Core_Model_Abstract
         if ($this->getStatusId() !== self::STATUS_CANCELED) {
             Mage::dispatchEvent('sales_order_item_cancel', array('item'=>$this));
             $this->setQtyCanceled($this->getQtyToCancel());
-            $this->setTaxCanceled($this->getTaxCanceled() + $this->getBaseTaxAmount() * $this->getQtyCanceled() / $this->getQtyOrdered());
-            $this->setHiddenTaxCanceled($this->getHiddenTaxCanceled() + $this->getHiddenTaxAmount() * $this->getQtyCanceled() / $this->getQtyOrdered());
+            $this->setTaxCanceled(
+                $this->getTaxCanceled() +
+                $this->getBaseTaxAmount() * $this->getQtyCanceled() / $this->getQtyOrdered()
+            );
+            $this->setHiddenTaxCanceled(
+                $this->getHiddenTaxCanceled() +
+                $this->getHiddenTaxAmount() * $this->getQtyCanceled() / $this->getQtyOrdered()
+            );
         }
         return $this;
     }
@@ -765,5 +809,45 @@ class Mage_Sales_Model_Order_Item extends Mage_Core_Model_Abstract
         }
 
         return $this->getData('product');
+    }
+
+    /**
+     * Get the discount amount applied on weee in base
+     *
+     * @return float
+     */
+    public function getBaseDiscountAppliedForWeeeTax()
+    {
+        $weeeTaxAppliedAmounts = unserialize($this->getWeeeTaxApplied());
+        $totalDiscount = 0;
+        foreach ($weeeTaxAppliedAmounts as $weeeTaxAppliedAmount) {
+            if (isset($weeeTaxAppliedAmount['total_base_weee_discount'])) {
+                return $weeeTaxAppliedAmount['total_base_weee_discount'];
+            } else {
+                $totalDiscount += isset($weeeTaxAppliedAmount['base_weee_discount'])
+                    ? $weeeTaxAppliedAmount['base_weee_discount'] : 0;
+            }
+        }
+        return $totalDiscount;
+    }
+
+    /**
+     * Get the discount amount applied on Weee
+     *
+     * @return float
+     */
+    public function getDiscountAppliedForWeeeTax()
+    {
+        $weeeTaxAppliedAmounts = unserialize($this->getWeeeTaxApplied());
+        $totalDiscount = 0;
+        foreach ($weeeTaxAppliedAmounts as $weeeTaxAppliedAmount) {
+            if (isset($weeeTaxAppliedAmount['total_weee_discount'])) {
+                return $weeeTaxAppliedAmount['total_weee_discount'];
+            } else {
+                $totalDiscount += isset($weeeTaxAppliedAmount['weee_discount'])
+                    ? $weeeTaxAppliedAmount['weee_discount'] : 0;
+            }
+        }
+        return $totalDiscount;
     }
 }

@@ -20,7 +20,7 @@
  *
  * @category    design
  * @package     default_default
- * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 ?>
@@ -401,7 +401,9 @@ addressesModel.prototype = {
                             }
                             data[id] = values.join(', ');
                         } else {
-                            data[id] = fields[i].options[fields[i].selectedIndex].text.escapeHTML();
+                            var option = fields[i].options[fields[i].selectedIndex],
+                                text   = option.value == '0' || option.value == '' ? '' : option.text;
+                            data[id] = text.escapeHTML();
                         }
                     } else if (value !== null) {
                         data[id] = value.escapeHTML();
@@ -530,7 +532,6 @@ addressesModel.prototype = {
         if (data.length) {
             // Create visible selectbox 'region_id' and hidden 'region'
             var html = '<select name="' + regionIdHtmlName + '" id="' + regionIdHtmlId + '" class="required-entry select" title="' + this.regionElement.title + '">';
-            html+= '<option value=""></option>';
             for (var i in data){
                 if(data[i].label) {
                     html+= '<option value="'+data[i].value+'"';

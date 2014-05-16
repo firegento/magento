@@ -20,7 +20,7 @@
  *
  * @category    Mage
  * @package     Mage_Tax
- * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
@@ -54,5 +54,31 @@ class Mage_Tax_Model_Resource_Calculation_Rule extends Mage_Core_Model_Resource_
             'title' => Mage::helper('tax')->__('Code'),
         ));
         return $this;
+    }
+
+    /**
+     * Fetches rules by rate, customer tax class and product tax class
+     * Returns array of rule codes
+     *
+     * @param array $rateId
+     * @param array $customerTaxClassId
+     * @param array $productTaxClassId
+     * @return array
+     */
+    public function fetchRuleCodes($rateId, $customerTaxClassId, $productTaxClassId)
+    {
+        $adapter = $this->_getReadAdapter();
+        $select = $adapter->select()
+            ->from(array('main' => $this->getTable('tax/tax_calculation')), null)
+            ->joinLeft(
+            array('d' => $this->getTable('tax/tax_calculation_rule')),
+            'd.tax_calculation_rule_id = main.tax_calculation_rule_id',
+            array('d.code'))
+            ->where('main.tax_calculation_rate_id in (?)', $rateId)
+            ->where('main.customer_tax_class_id in (?)', $customerTaxClassId)
+            ->where('main.product_tax_class_id in (?)', $productTaxClassId)
+            ->distinct(true);
+
+        return $adapter->fetchCol($select);
     }
 }

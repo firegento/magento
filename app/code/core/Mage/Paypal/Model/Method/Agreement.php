@@ -20,7 +20,7 @@
  *
  * @category    Mage
  * @package     Mage_Paypal
- * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
@@ -300,13 +300,15 @@ class Mage_Paypal_Model_Method_Agreement extends Mage_Sales_Model_Payment_Method
             )
         );
 
+        $proConfig = $this->_pro->getConfig();
         $api = $this->_pro->getApi()
             ->setReferenceId($billingAgreement->getReferenceId())
-            ->setPaymentAction($this->_pro->getConfig()->paymentAction)
+            ->setPaymentAction($proConfig->paymentAction)
             ->setAmount($amount)
+            ->setCurrencyCode($payment->getOrder()->getBaseCurrencyCode())
             ->setNotifyUrl(Mage::getUrl('paypal/ipn/'))
             ->setPaypalCart(Mage::getModel('paypal/cart', array($order)))
-            ->setIsLineItemsEnabled($this->_pro->getConfig()->lineItemsEnabled)
+            ->setIsLineItemsEnabled($proConfig->lineItemsEnabled)
             ->setInvNum($order->getIncrementId())
         ;
 

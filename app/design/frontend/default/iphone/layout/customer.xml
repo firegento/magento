@@ -21,23 +21,9 @@
  *
  * @category    design
  * @package     default_iphone
- * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
-
-Supported layout update handles (action):
-- customer_account_index
-- customer_address_index
-- customer_address_view
-- customer_account_login
-- customer_account_logoutsuccess
-- customer_account_create
-- customer_account_forgotpassword
-- customer_account_confirmation
-- customer_account_edit
-
-Supported layout update handles (special):
-- default
 
 -->
 <layout version="0.1.0">

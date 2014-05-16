@@ -19,7 +19,7 @@
  *
  * @category    Mage
  * @package     Mage_Adminhtml
- * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 var AdminOrder = new Class.create();
@@ -204,23 +204,38 @@ AdminOrder.prototype = {
         }
         data = data.toObject();
 
-        if( (type == 'billing' && this.shippingAsBilling)
-            || (type == 'shipping' && !this.shippingAsBilling) ) {
+        if( (type == 'billing' && this.shippingAsBilling && !this.isShippingMethodReseted)
+            || (type == 'shipping' && !this.shippingAsBilling && !this.isShippingMethodReseted) ) {
             data['reset_shipping'] = true;
         }
 
         data['order['+type+'_address][customer_address_id]'] = $('order-'+type+'_address_customer_address_id').value;
 
+        if (type == 'billing' && this.shippingAsBilling) {
+            this.copyDataFromBillingToShipping(field);
+        }
+
         if (data['reset_shipping']) {
             this.resetShippingMethod(data);
-        }
-        else {
+        } else {
             this.saveData(data);
-            if (name == 'country_id' || name == 'customer_address_id') {
+            if (!this.isShippingMethodReseted && (name == 'country_id' || name == 'customer_address_id')) {
                 this.loadArea(['shipping_method', 'billing_method', 'totals', 'items'], true, data);
             }
-            // added for reloading of default sender and default recipient for giftmessages
-            //this.loadArea(['giftmessage'], true, data);
+        }
+    },
+
+    copyDataFromBillingToShipping : function(field) {
+        var shippingId = $(field).identify().replace('-billing_', '-shipping_');
+        var inputField = $(shippingId);
+        if (inputField) {
+            inputField.setValue($(field).getValue());
+            if (inputField.changeUpdater) {
+                inputField.changeUpdater();
+            }
+            $(this.shippingAddressContainer).select('select').each(function(el){
+                el.disable();
+            });
         }
     },
 
@@ -277,6 +292,7 @@ AdminOrder.prototype = {
         if ($('order-shipping_address_customer_address_id')) {
             $('order-shipping_address_customer_address_id').disabled = flag;
         }
+
         if ($(this.shippingAddressContainer)) {
             var dataFields = $(this.shippingAddressContainer).select('input', 'select', 'textarea');
             for (var i = 0; i < dataFields.length; i++) {
@@ -291,6 +307,17 @@ AdminOrder.prototype = {
                 } else {
                     buttons[i].removeClassName('disabled');
                 }
+            }
+        }
+    },
+
+    turnOffShippingFields : function() {
+        if ($(this.shippingAddressContainer)) {
+            var dataFields = $(this.shippingAddressContainer).select('input', 'select', 'textarea', 'button');
+            for (var i = 0; i < dataFields.length; i++) {
+                dataFields[i].removeAttribute('name');
+                dataFields[i].removeAttribute('id');
+                dataFields[i].readOnly = true;
             }
         }
     },
@@ -312,7 +339,7 @@ AdminOrder.prototype = {
     resetShippingMethod : function(data){
         data['reset_shipping'] = 1;
         this.isShippingMethodReseted = true;
-        this.loadArea(['shipping_method', 'billing_method', 'shipping_address', 'totals', 'giftmessage', 'items'], true, data);
+        this.loadArea(['shipping_method', 'billing_method', 'totals', 'giftmessage', 'items'], true, data);
     },
 
     loadShippingRates : function(){
@@ -364,7 +391,7 @@ AdminOrder.prototype = {
                        field.disabled = false;
                        if (!el.include('_before') && !el.include('_after') && !field.bindChange) {
                            field.bindChange = true;
-                           field.paymentContainer = form; //@deprecated after 1.4.0.0-rc1
+                           field.paymentContainer = form; /** @deprecated after 1.4.0.0-rc1 */
                            field.method = method;
                            field.observe('change', this.changePaymentData.bind(this))
                         }
@@ -934,7 +961,7 @@ AdminOrder.prototype = {
         else {
             new Ajax.Request(url, {parameters:params,loaderArea: indicator});
         }
-        if (typeof productConfigure != 'undefined' && area instanceof Array && area.indexOf('items' != -1)) {
+        if (typeof productConfigure != 'undefined' && area instanceof Array && area.indexOf('items') != -1) {
             productConfigure.clean('quote_items');
         }
     },
@@ -952,14 +979,17 @@ AdminOrder.prototype = {
         if(typeof this.loadingAreas == 'string'){
             this.loadingAreas = [this.loadingAreas];
         }
-        if(this.loadingAreas.indexOf('message'==-1)) this.loadingAreas.push('message');
+        if(this.loadingAreas.indexOf('message') == -1) {
+            this.loadingAreas.push('message');
+        }
+
         for(var i=0; i<this.loadingAreas.length; i++){
             var id = this.loadingAreas[i];
             if($(this.getAreaId(id))){
                 if ('message' != id || response[id]) {
                     var wrapper = new Element('div');
                     wrapper.update(response[id] ? response[id] : '');
-                    $(this.getAreaId(id)).update(wrapper);
+                    $(this.getAreaId(id)).update(Prototype.Browser.IE ? wrapper.outerHTML : wrapper);
                 }
                 if ($(this.getAreaId(id)).callback) {
                     this[$(this.getAreaId(id)).callback]();
@@ -1105,7 +1135,6 @@ AdminOrder.prototype = {
         }
 
         var parentEl = el.up(1);
-        var parentPos = Element.cumulativeOffset(parentEl);
         if (show) {
             parentEl.removeClassName('ignore-validate');
         }
@@ -1125,6 +1154,7 @@ AdminOrder.prototype = {
             });
         }
 
+        parentEl.setStyle({position: 'relative'});
         el.setStyle({
             display: show ? 'none' : '',
             position: 'absolute',
@@ -1132,8 +1162,8 @@ AdminOrder.prototype = {
             opacity: 0.8,
             width: parentEl.getWidth() + 'px',
             height: parentEl.getHeight() + 'px',
-            top: parentPos[1] + 'px',
-            left: parentPos[0] + 'px'
+            top: 0,
+            left: 0
         });
     },
 

@@ -20,7 +20,7 @@
  *
  * @category    Mage
  * @package     Mage_Persistent
- * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
@@ -151,7 +151,6 @@ class Mage_Persistent_Model_Observer
     public function emulateTopLinks($block)
     {
         $this->_applyAccountLinksPersistentData();
-        $block->removeLinkByUrl(Mage::getUrl('customer/account/login'));
     }
 
     /**
@@ -332,7 +331,7 @@ class Mage_Persistent_Model_Observer
     }
 
     /**
-     * Prevent express checkout with Google checkout and PayPal Express checkout
+     * Prevent express checkout with PayPal Express checkout
      *
      * @param Varien_Event_Observer $observer
      */
@@ -344,14 +343,12 @@ class Mage_Persistent_Model_Observer
 
         /** @var $controllerAction Mage_Core_Controller_Front_Action */
         $controllerAction = $observer->getEvent()->getControllerAction();
-        if (is_callable(array($controllerAction, 'redirectLogin'))) {
+        if (method_exists($controllerAction, 'redirectLogin')) {
             Mage::getSingleton('core/session')->addNotice(
                 Mage::helper('persistent')->__('To proceed to Checkout, please log in using your email address.')
             );
             $controllerAction->redirectLogin();
-            if ($controllerAction instanceof Mage_GoogleCheckout_RedirectController
-                || $controllerAction instanceof Mage_Paypal_Controller_Express_Abstract
-            ) {
+            if ($controllerAction instanceof Mage_Paypal_Controller_Express_Abstract) {
                 Mage::getSingleton('customer/session')
                     ->setBeforeAuthUrl(Mage::getUrl('persistent/index/expressCheckout'));
             }
@@ -494,7 +491,9 @@ class Mage_Persistent_Model_Observer
             $customerSession->setCustomerId(null)->setCustomerGroupId(null);
         }
     }
-
+    /**
+     * Active Persistent Sessions
+     */
     protected function _expirePersistentSession()
     {
         /** @var $checkoutSession Mage_Checkout_Model_Session */

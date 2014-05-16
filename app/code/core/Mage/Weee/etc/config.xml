@@ -21,7 +21,7 @@
  *
  * @category    Mage
  * @package     Mage_Weee
- * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 -->
@@ -106,6 +106,22 @@
                     </weee>
                 </observers>
             </bundle_product_view_config>
+            <create_order_session_quote_initialized>
+                <observers>
+                    <weee>
+                        <class>weee/observer</class>
+                        <method>setSessionQuoteStore</method>
+                    </weee>
+                </observers>
+            </create_order_session_quote_initialized>
+            <init_from_order_session_quote_initialized>
+                <observers>
+                    <weee>
+                        <class>weee/observer</class>
+                        <method>setSessionQuoteStore</method>
+                    </weee>
+                </observers>
+            </init_from_order_session_quote_initialized>
         </events>
         <fieldsets>
             <sales_convert_quote_item>
@@ -182,7 +198,7 @@
                     <weee>
                         <class>weee/total_quote_weee</class>
                         <after>subtotal,tax_subtotal</after>
-                        <before>tax,discount</before>
+                        <before>shipping,tax,discount</before>
                     </weee>
                 </totals>
                 <nominal_totals>
@@ -197,7 +213,6 @@
                     <weee>
                         <class>weee/total_invoice_weee</class>
                         <after>subtotal,tax,discount,grand_total,cost_total,shipping</after>
-                        <before></before>
                     </weee>
                 </totals>
             </order_invoice>

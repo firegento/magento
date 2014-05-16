@@ -20,7 +20,7 @@
  *
  * @category    Mage
  * @package     Mage_ProductAlert
- * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
@@ -134,5 +134,20 @@ abstract class Mage_ProductAlert_Block_Email_Abstract extends Mage_Core_Block_Te
             '_store'        => $this->getStore(),
             '_store_to_url' => true
         );
+    }
+
+    /**
+     * Get filtered product short description to be inserted into mail
+     *
+     * @param Mage_Catalog_Model_Product $product
+     * @return string|null
+     */
+    public function _getFilteredProductShortDescription(Mage_Catalog_Model_Product $product)
+    {
+        $shortDescription = $product->getShortDescription();
+        if ($shortDescription) {
+            $shortDescription = Mage::getSingleton('core/input_filter_maliciousCode')->filter($shortDescription);
+        }
+        return $shortDescription;
     }
 }

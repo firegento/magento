@@ -20,7 +20,7 @@
  *
  * @category    Mage
  * @package     Mage_Review
- * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
@@ -155,6 +155,12 @@ class Mage_Review_ProductController extends Mage_Core_Controller_Front_Action
      */
     public function postAction()
     {
+        if (!$this->_validateFormKey()) {
+            // returns to the product item page
+            $this->_redirectReferer();
+            return;
+        }
+
         if ($data = Mage::getSingleton('review/session')->getFormData(true)) {
             $rating = array();
             if (isset($data['ratings']) && is_array($data['ratings'])) {

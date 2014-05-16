@@ -20,7 +20,7 @@
  *
  * @category    Mage
  * @package     Mage_Connect
- * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
@@ -367,6 +367,11 @@ final class Maged_Controller
      */
     public function connectInstallPackageUploadAction()
     {
+        if (!$this->_validateFormKey()) {
+            echo "No file was uploaded";
+            return;
+        }
+
         if (!$_FILES) {
             echo "No file was uploaded";
             return;
@@ -991,9 +996,9 @@ final class Maged_Controller
     {
         return array(
             'major'     => '1',
-            'minor'     => '7',
-            'revision'  => '0',
-            'patch'     => '1',
+            'minor'     => '8',
+            'revision'  => '1',
+            'patch'     => '0',
             'stability' => '',
             'number'    => '',
         );
@@ -1089,5 +1094,28 @@ final class Maged_Controller
         }
 
         return $messagesMap[$type];
+    }
+
+    /**
+     * Validate Form Key
+     *
+     * @return bool
+     */
+    protected function _validateFormKey()
+    {
+        if (!($formKey = $_REQUEST['form_key']) || $formKey != $this->session()->getFormKey()) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Retrieve Session Form Key
+     *
+     * @return string
+     */
+    public function getFormKey()
+    {
+        return $this->session()->getFormKey();
     }
 }

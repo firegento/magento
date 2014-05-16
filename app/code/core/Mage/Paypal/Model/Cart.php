@@ -20,7 +20,7 @@
  *
  * @category    Mage
  * @package     Mage_Paypal
- * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
@@ -416,6 +416,16 @@ class Mage_Paypal_Model_Cart
     }
 
     /**
+     * Check whether items are valid
+     *
+     * @return bool
+     */
+    public function areItemsValid()
+    {
+        return $this->_areItemsValid;
+    }
+
+    /**
      * Add a usual line item with amount and qty
      *
      * @param Varien_Object $salesItem
@@ -494,5 +504,20 @@ class Mage_Paypal_Model_Cart
     {
         $this->_totals[self::TOTAL_TAX] += (float)$salesEntity->getBaseHiddenTaxAmount();
         $this->_totals[self::TOTAL_TAX] += (float)$salesEntity->getBaseShippingHiddenTaxAmount();
+    }
+
+    /**
+     * Check whether any item has negative amount
+     *
+     * @return bool
+     */
+    public function hasNegativeItemAmount()
+    {
+        foreach ($this->_items as $item) {
+            if ($item->getAmount() < 0) {
+                return true;
+            }
+        }
+        return false;
     }
 }

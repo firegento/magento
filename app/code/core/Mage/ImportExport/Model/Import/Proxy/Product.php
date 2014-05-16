@@ -20,7 +20,7 @@
  *
  * @category    Mage
  * @package     Mage_ImportExport
- * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
@@ -40,5 +40,15 @@ class Mage_ImportExport_Model_Import_Proxy_Product extends Mage_Catalog_Model_Pr
      */
     protected function _construct()
     {
+    }
+
+    /**
+     * Retrieve object id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->_getData('id');
     }
 }

@@ -20,7 +20,7 @@
  *
  * @category    Mage
  * @package     Mage_Sales
- * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
@@ -40,6 +40,9 @@ class Mage_Sales_Model_Order_Invoice_Total_Subtotal extends Mage_Sales_Model_Ord
         $subtotalInclTax= 0;
         $baseSubtotalInclTax = 0;
 
+        $totalWeeeDiscount = 0;
+        $totalBaseWeeeDiscount = 0;
+
         $order = $invoice->getOrder();
 
         foreach ($invoice->getAllItems() as $item) {
@@ -53,13 +56,15 @@ class Mage_Sales_Model_Order_Invoice_Total_Subtotal extends Mage_Sales_Model_Ord
             $baseSubtotal   += $item->getBaseRowTotal();
             $subtotalInclTax+= $item->getRowTotalInclTax();
             $baseSubtotalInclTax += $item->getBaseRowTotalInclTax();
+            $totalWeeeDiscount += $item->getOrderItem()->getDiscountAppliedForWeeeTax();
+            $totalBaseWeeeDiscount += $item->getOrderItem()->getBaseDiscountAppliedForWeeeTax();
         }
 
         $allowedSubtotal = $order->getSubtotal() - $order->getSubtotalInvoiced();
         $baseAllowedSubtotal = $order->getBaseSubtotal() - $order->getBaseSubtotalInvoiced();
-        $allowedSubtotalInclTax = $allowedSubtotal + $order->getHiddenTaxAmount()
+        $allowedSubtotalInclTax = $allowedSubtotal + $order->getHiddenTaxAmount() + $totalWeeeDiscount
                 + $order->getTaxAmount() - $order->getTaxInvoiced() - $order->getHiddenTaxInvoiced();
-        $baseAllowedSubtotalInclTax = $baseAllowedSubtotal + $order->getBaseHiddenTaxAmount()
+        $baseAllowedSubtotalInclTax = $baseAllowedSubtotal + $order->getBaseHiddenTaxAmount() + $totalBaseWeeeDiscount
                 + $order->getBaseTaxAmount() - $order->getBaseTaxInvoiced() - $order->getBaseHiddenTaxInvoiced();
 
         /**

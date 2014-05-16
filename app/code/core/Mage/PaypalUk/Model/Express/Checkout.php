@@ -20,7 +20,7 @@
  *
  * @category    Mage
  * @package     Mage_PaypalUk
- * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
@@ -35,7 +35,7 @@ class Mage_PaypalUk_Model_Express_Checkout extends Mage_Paypal_Model_Express_Che
      *
      * @var string
      */
-    protected $_apiType = 'paypaluk/api_nvp';
+    protected $_apiType = 'paypaluk/api_express_nvp';
 
     /**
      * Payment method tpye

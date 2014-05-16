@@ -19,7 +19,7 @@
  *
  * @category    Mage
  * @package     Mage_Adminhtml
- * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 var Packaging = Class.create();
@@ -139,7 +139,7 @@ Packaging.prototype = {
                 height = parseFloat(pack.select('input[name="container_height"]')[0].value);
                 packagesParams[packageId] = {
                     container:                  pack.select('select[name="package_container"]')[0].value,
-                    customs_value:              parseInt(pack.select('input[name="package_customs_value"]')[0].value, 10),
+                    customs_value:              parseFloat(pack.select('input[name="package_customs_value"]')[0].value, 10),
                     weight:                     isNaN(weight) ? '' : weight,
                     length:                     isNaN(length) ? '' : length,
                     width:                      isNaN(width) ? '' : width,

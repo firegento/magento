@@ -20,7 +20,7 @@
  *
  * @category    Mage
  * @package     Mage_Adminhtml
- * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
@@ -111,7 +111,16 @@ class Mage_Adminhtml_Sales_OrderController extends Mage_Adminhtml_Controller_Act
     {
         $this->_title($this->__('Sales'))->_title($this->__('Orders'));
 
-        if ($order = $this->_initOrder()) {
+        $order = $this->_initOrder();
+        if ($order) {
+
+            $isActionsNotPermitted = $order->getActionFlag(
+                Mage_Sales_Model_Order::ACTION_FLAG_PRODUCTS_PERMISSION_DENIED
+            );
+            if ($isActionsNotPermitted) {
+                $this->_getSession()->addError($this->__('You don\'t have permissions to manage this order because of one or more products are not permitted for your website.'));
+            }
+
             $this->_initAction();
 
             $this->_title(sprintf("#%s", $order->getRealOrderId()));
@@ -383,17 +392,18 @@ class Mage_Adminhtml_Sales_OrderController extends Mage_Adminhtml_Controller_Act
     {
         $orderIds = $this->getRequest()->getPost('order_ids', array());
         $countHoldOrder = 0;
-        $countNonHoldOrder = 0;
+
         foreach ($orderIds as $orderId) {
             $order = Mage::getModel('sales/order')->load($orderId);
             if ($order->canHold()) {
                 $order->hold()
                     ->save();
                 $countHoldOrder++;
-            } else {
-                $countNonHoldOrder++;
             }
         }
+
+        $countNonHoldOrder = count($orderIds) - $countHoldOrder;
+
         if ($countNonHoldOrder) {
             if ($countHoldOrder) {
                 $this->_getSession()->addError($this->__('%s order(s) were not put on hold.', $countNonHoldOrder));

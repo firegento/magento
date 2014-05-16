@@ -20,7 +20,7 @@
  *
  * @category    Mage
  * @package     Mage_Sales
- * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
@@ -64,11 +64,21 @@ class Mage_Sales_Model_Order_Invoice_Total_Discount extends Mage_Sales_Model_Ord
             $orderItemQty       = $orderItem->getQtyOrdered();
 
             if ($orderItemDiscount && $orderItemQty) {
+
                 /**
                  * Resolve rounding problems
+                 *
+                 * We dont want to include the weee discount amount as the right amount
+                 * is added when calculating the taxes.
+                 *
+                 * Also the subtotal is without weee
                  */
-                $discount = $orderItemDiscount - $orderItem->getDiscountInvoiced();
-                $baseDiscount = $baseOrderItemDiscount - $orderItem->getBaseDiscountInvoiced();
+
+                $discount = $orderItemDiscount - $orderItem->getDiscountInvoiced()
+                    - $orderItem->getDiscountAppliedForWeeeTax();
+                $baseDiscount = $baseOrderItemDiscount - $orderItem->getBaseDiscountInvoiced()
+                    - $orderItem->getBaseDiscountAppliedForWeeeTax();
+
                 if (!$item->isLast()) {
                     $activeQty = $orderItemQty - $orderItem->getQtyInvoiced();
                     $discount = $invoice->roundPrice($discount / $activeQty * $item->getQty(), 'regular', true);
@@ -83,9 +93,8 @@ class Mage_Sales_Model_Order_Invoice_Total_Discount extends Mage_Sales_Model_Ord
             }
         }
 
-
-        $invoice->setDiscountAmount($totalDiscountAmount);
-        $invoice->setBaseDiscountAmount($baseTotalDiscountAmount);
+        $invoice->setDiscountAmount(-$totalDiscountAmount);
+        $invoice->setBaseDiscountAmount(-$baseTotalDiscountAmount);
 
         $invoice->setGrandTotal($invoice->getGrandTotal() - $totalDiscountAmount);
         $invoice->setBaseGrandTotal($invoice->getBaseGrandTotal() - $baseTotalDiscountAmount);
