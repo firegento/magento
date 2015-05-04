@@ -389,6 +389,11 @@ class Mage_Checkout_Model_Cart extends Varien_Object implements Mage_Checkout_Mo
     {
         Mage::dispatchEvent('checkout_cart_update_items_before', array('cart'=>$this, 'info'=>$data));
 
+        /**
+         * Add product resets multi shipping flag due to unknown address to add
+         */
+        $this->getQuote()->setIsMultiShipping(false);
+
         /* @var $messageFactory Mage_Core_Model_Message */
         $messageFactory = Mage::getSingleton('core/message');
         $session = $this->getCheckoutSession();

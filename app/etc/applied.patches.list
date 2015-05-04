@@ -2,3 +2,10 @@
 patching file app/code/core/Mage/SalesRule/Model/Rule/Condition/Product/Subselect.php
 
 
+-e -n 2015-05-04 01:58:41 UTC | SUPEE-2162 | EE_1.13.0.2 | v2 | 53e71b1c85eb444787296ef84198ec143588260d | Fri Oct 4 14:12:27 2013 +0300 | v1.13.0.2..HEAD
+patching file app/code/core/Mage/Checkout/Model/Cart.php
+patching file app/code/core/Mage/Checkout/controllers/CartController.php
+Hunk #1 succeeded at 140 (offset 17 lines).
+patching file app/code/core/Mage/Sales/Model/Quote.php
+
+

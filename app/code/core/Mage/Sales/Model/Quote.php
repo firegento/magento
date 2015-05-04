@@ -976,6 +976,11 @@ class Mage_Sales_Model_Quote extends Mage_Core_Model_Abstract
         }
 
         /**
+         * Add product resets multi shipping flag due to unknown address to add
+         */
+        $this->setIsMultiShipping(false);
+
+        /**
          * If prepare process return one object
          */
         if (!is_array($cartCandidates)) {
