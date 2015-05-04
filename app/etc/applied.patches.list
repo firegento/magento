@@ -1,0 +1,4 @@
+-e -n 2015-05-04 01:54:23 UTC | SUPEE-4814 | EE_1.14.1.0 | v1 | e1ee901c9786c2068bd5530da0c80e1b28f98be7 | Mon Nov 17 20:53:49 2014 +0200 | v1.14.1.0..HEAD
+patching file app/code/core/Mage/SalesRule/Model/Rule/Condition/Product/Subselect.php
+
+
