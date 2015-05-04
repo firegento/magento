@@ -49,8 +49,6 @@ if (isset($_SERVER['MAGE_IS_DEVELOPER_MODE'])) {
 
 #ini_set('display_errors', 1);
 
-// emulate index.php entry point for correct URLs generation in API
-Mage::register('custom_entry_point', true);
 Mage::$headersSentThrowsException = false;
 Mage::init('admin');
 Mage::app()->loadAreaPart(Mage_Core_Model_App_Area::AREA_GLOBAL, Mage_Core_Model_App_Area::PART_EVENTS);
