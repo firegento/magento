@@ -13,3 +13,7 @@ patching file app/code/core/Mage/Sales/Model/Quote.php
 patching file app/code/core/Mage/Rule/Model/Condition/Product/Abstract.php
 
 
+-e -n 2015-05-04 02:03:32 UTC | SUPEE-3389 | EE_1.13.0.1 | v1 | 89010ebb93c001c093e5812f036db5b8ecb20dda | Fri Apr 18 17:20:06 2014 -0700 | v1.13.0.1..HEAD
+patching file lib/Varien/Cache/Backend/Database.php
+
+
