@@ -9,3 +9,7 @@ Hunk #1 succeeded at 140 (offset 17 lines).
 patching file app/code/core/Mage/Sales/Model/Quote.php
 
 
+-e -n 2015-05-04 02:02:19 UTC | SUPEE-2458 | EE_1.13.0.1 | v1 | 49f71a8f9cd0ad34195d053f2d666b1b7b740de6 | Tue Nov 12 15:17:45 2013 -0800 | v1.13.0.1..HEAD
+patching file app/code/core/Mage/Rule/Model/Condition/Product/Abstract.php
+
+

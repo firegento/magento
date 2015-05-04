@@ -120,7 +120,10 @@ abstract class Mage_Rule_Model_Condition_Product_Abstract extends Mage_Rule_Mode
             $attribute = 'category_id';
             $value     = $this->bindArrayOfIds($value);
         }
-
+        if(!is_array($value) && in_array($operator, array('()', '!()'))) {
+            $value = explode(',', $value);
+            $value = array_map('trim', $value);
+        } 
         /** @var $ruleResource Mage_Rule_Model_Resource_Rule_Condition_SqlBuilder */
         $ruleResource = $this->getRuleResourceHelper();
 
