@@ -10,8 +10,8 @@ Magento Community Edition
 - [1.9.0.1](https://github.com/Zookal/magento-ce/tree/magento-1.9.0.1)
 - [1.9.1.0](https://github.com/Zookal/magento-ce/tree/magento-1.9.1.0)
 - [1.9.1.1](https://github.com/Zookal/magento-ce/tree/magento-1.9.1.1)
-- [1.9.1.2](https://github.com/Zookal/magento-ce/tree/magento-1.9.1.2) (inoffical)
-- [1.9.1.3](https://github.com/Zookal/magento-ce/tree/magento-1.9.1.3) (inoffical)
+- [1.9.1.2](https://github.com/Zookal/magento-ce/tree/v1.9.1.2) (inoffical)
+- [1.9.1.3](https://github.com/Zookal/magento-ce/tree/v1.9.1.3) (inoffical)
 
 [https://www.magentocommerce.com/products/downloads/magento/](https://www.magentocommerce.com/products/downloads/magento/)
 
