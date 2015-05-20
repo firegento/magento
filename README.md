@@ -4,16 +4,16 @@ Magento Community Edition
 Magento Community Edition
 
 - [1.7.0.2](https://github.com/firegento/magento/tree/v1.7.0.2)
-- [1.7.0.2+patch1](https://github.com/firegento/magento/tree/v1.7.0.2+patch1) (inoffical)
+- [1.7.0.2+patch1](https://github.com/firegento/magento/tree/v1.7.0.2+patch1) (unoffical)
 - [1.8.1.0](https://github.com/firegento/magento/tree/v1.8.1.0)
-- [1.8.1.0+patch1](https://github.com/firegento/magento/tree/v1.8.1.0+patch1) (inoffical)
-- [1.8.1.0+patch2](https://github.com/firegento/magento/tree/v1.8.1.0+patch2) (inoffical)
+- [1.8.1.0+patch1](https://github.com/firegento/magento/tree/v1.8.1.0+patch1) (unoffical)
+- [1.8.1.0+patch2](https://github.com/firegento/magento/tree/v1.8.1.0+patch2) (unoffical)
 - [1.9.0.0](https://github.com/firegento/magento/tree/v1.9.0.0)
 - [1.9.0.1](https://github.com/firegento/magento/tree/v1.9.0.1)
 - [1.9.1.0](https://github.com/firegento/magento/tree/v1.9.1.0)
 - [1.9.1.1](https://github.com/firegento/magento/tree/v1.9.1.1)
-- [1.9.1.1+patch1](https://github.com/firegento/magento/tree/v1.9.1.1+patch1) (inoffical)
-- [1.9.1.1+patch2](https://github.com/firegento/magento/tree/v1.9.1.1+patch2) (inoffical)
+- [1.9.1.1+patch1](https://github.com/firegento/magento/tree/v1.9.1.1+patch1) (unoffical)
+- [1.9.1.1+patch2](https://github.com/firegento/magento/tree/v1.9.1.1+patch2) (unoffical)
 
 [https://www.magentocommerce.com/products/downloads/magento/](https://www.magentocommerce.com/products/downloads/magento/)
 
