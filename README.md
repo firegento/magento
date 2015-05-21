@@ -82,26 +82,7 @@ You main root project composer.json file can look like this:
         }
     ],
     "require": {
-        "otherVendor/otherPackageA": "v1.0.0",
-        "magento/magento": "1.9.1.1+patch2",
-        "otherVendor/otherPackageB": "v2.0.0",
-    },
-    "repositories": [
-        {
-            "type": "package",
-            "package": {
-                "name": "magento/magento",
-                "version": "1.9.1.1+patch2",
-                "dist": {
-                    "url": "https://codeload.github.com/firegento/magento-ce/zip/1.9.1.1+patch2",
-                    "type": "zip"
-                }
-            }
-        },
-        {
-            "type": "vcs",
-            "url": "git@github.com:organization/repo.git"
-        },
+        "firegento/magento": "1.9.1.1+patch2",
     },
     "scripts": {
         "post-install-cmd": [
@@ -114,11 +95,20 @@ You main root project composer.json file can look like this:
 }
 ```
 
-To run it: `$ composer.phar install -vv`. This will download the version `1.9.1.1+patch2` from
-GitHub, unzips it and places the files in the folder `vendor/magento/magento`. A post install/update
-script copies those files to your root folder. If you want to update to the next version simply replace
-all occurrences of `1.9.1.1+patch2` with the next version. There are typos in the above JSON
-to prevent you from blind copying. If you think this feels wrong please suggest an alternative way via an issue.
+To run it: 
+
+```
+composer.phar install -vv
+```
+
+This will download the version `1.9.1.1+patch2` from GitHub, 
+unzips it and places the files in the folder `vendor/magento/magento`. 
+
+A post install/update script copies those files to your root folder. 
+If you want to update to the next version simply replace `1.9.1.1+patch2` with the next version. 
+
+There are typos in the above JSON to prevent you from blind copying. 
+If you think this feels wrong please suggest an alternative way via an issue.
 
 ### Tags
 
