@@ -1,0 +1,10 @@
+{
+    "name": "firegento/magento",
+    "type": "magento-source",
+    "repositories": [
+        {"type": "composer", "url": "http://packages.firegento.com"}
+    ],
+    "require": {
+        "magento-hackathon/magento-composer-installer": "*"
+    }
+}
