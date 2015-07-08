@@ -1,6 +1,6 @@
 {
     "name": "firegento/magento",
-    "type": "magento-source",
+    "type": "magento-core",
     "repositories": [
         {"type": "composer", "url": "http://packages.firegento.com"}
     ],
