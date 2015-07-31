@@ -55,7 +55,7 @@ class Mage_Oauth_Adminhtml_Oauth_AuthorizeController extends Mage_Adminhtml_Cont
      */
     public function preDispatch()
     {
-        $this->getRequest()->setParam('forwarded', true);
+        Mage::app()->getRequest()->setInternallyForwarded();
 
         // check login data before it set null in Mage_Admin_Model_Observer::actionPreDispatchAdmin
         $loginError = $this->_checkLoginIsEmpty();
@@ -297,5 +297,15 @@ class Mage_Oauth_Adminhtml_Oauth_AuthorizeController extends Mage_Adminhtml_Cont
     public function rejectSimpleAction()
     {
         $this->_initRejectPage();
+    }
+
+    /**
+     * Check admin permissions for this controller
+     *
+     * @return boolean
+     */
+    protected function _isAllowed()
+    {
+        return true;
     }
 }
