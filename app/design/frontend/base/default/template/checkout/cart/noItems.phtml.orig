@@ -19,21 +19,18 @@
  * needs please refer to http://www.magentocommerce.com for more information.
  *
  * @category    design
- * @package     default
+ * @package     base_default
  * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 ?>
-<?php if ($messages = $this->get('messages')): ?>
-<ul class="msgs">
-<?php foreach ($messages as $type=>$msgs): ?>
-    <li>
-        <ul class="<?php echo $type ?>-msg">
-        <?php foreach ($msgs as $msg): ?>
-            <li><?php echo $this->escapeHtml($msg) ?></li>
-        <?php endforeach; ?>
-        </ul>
-    </li>
-<?php endforeach; ?>
-</ul>
-<?php endif; ?>
+<div class="page-title">
+    <h1><?php echo $this->__('Shopping Cart is Empty') ?></h1>
+</div>
+<div class="cart-empty">
+    <?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+    <?php echo $this->getChildHtml('checkout_cart_empty_widget'); ?>
+    <p><?php echo $this->__('You have no items in your shopping cart.') ?></p>
+    <p><?php echo $this->__('Click <a href="%s">here</a> to continue shopping.', $this->getContinueShoppingUrl()) ?></p>
+    <?php echo $this->getChildHtml('shopping.cart.table.after'); ?>
+</div>
