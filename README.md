@@ -15,7 +15,7 @@ Magento Community Edition
 - [1.9.1.1+patch1](https://github.com/firegento/magento/tree/v1.9.1.1+patch1) (unoffical)
 - [1.9.1.1+patch2](https://github.com/firegento/magento/tree/v1.9.1.1+patch2) (unoffical)
 - [1.9.2.0](https://github.com/firegento/magento/tree/1.9.2.0)
-- [1.9.2.1](https://github.com/firegento/magento/tree/v1.9.2.1)
+- [1.9.2.1](https://github.com/firegento/magento/tree/1.9.2.1)
 
 [https://www.magentocommerce.com/products/downloads/magento/](https://www.magentocommerce.com/products/downloads/magento/)
 
