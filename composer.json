@@ -2,10 +2,12 @@
     "name": "firegento/magento",
     "type": "magento-core",
     "repositories": [
-        {"type": "composer", "url": "http://packages.firegento.com"}
+        {"type": "composer", "url": "http://packages.firegento.com"},
+        {"type": "git", "url": "https://github.com/AydinHassan/magento-core-composer-installer"}
     ],
     "require": {
-        "magento-hackathon/magento-composer-installer": "*"
+        "magento-hackathon/magento-composer-installer": "*",
+        "aydin-hassan/magento-core-composer-installer": "*"
     },
     "extra": {
         "map": [
