@@ -1,6 +1,6 @@
 {
-    "name": "magento/1.9.0.1",
-    "license": "OSL-3.0",
-    "description": "Magento CE",
-    "homepage": "https://github.com/Zookal/magento-ce/tree/magento-1.9.0.1"
+    "name": "firegento/magento",
+    "type": "magento-core",
+    "license": ["OSL-3.0", "AFL-3.0"],
+    "description": "Magento CE"
 }
