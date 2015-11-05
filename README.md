@@ -10,6 +10,7 @@ Magento Community Edition
 - [1.8.1.0+patch2](https://github.com/firegento/magento/tree/v1.8.1.0+patch2) (unoffical)
 - [1.9.0.0](https://github.com/firegento/magento/tree/v1.9.0.0)
 - [1.9.0.1](https://github.com/firegento/magento/tree/v1.9.0.1)
+- [1.9.0.1+patch1+SUPEE-6788](https://github.com/firegento/magento/tree/v1.9.0.1+patch1+SUPEE-6788)
 - [1.9.1.0](https://github.com/firegento/magento/tree/v1.9.1.0)
 - [1.9.1.1](https://github.com/firegento/magento/tree/v1.9.1.1)
 - [1.9.1.1+patch1](https://github.com/firegento/magento/tree/v1.9.1.1+patch1) (unoffical)
@@ -36,7 +37,7 @@ Magento Community Edition
 
 Contains SUPEE-5344
 
-### v1.9.0.0 + v1.9.0.1 + v1.9.1.0
+### v1.9.0.0 + v1.9.0.1 + v1.9.1.0 + v1.9.0.1+patch1+SUPEE-6788
 
 Insecure, do not use!
 
@@ -78,44 +79,35 @@ You main root project composer.json file can look like this:
 
 ```json
 {
-    "name": "myCompany/myOnlineStore"
-    "description": "The ACME Online Store!",
-    "license": "OSL-3.0",
-    "authors": [
-        {
-            "name": "Road Runner",
-            "email": "meepmeep@acme.com"
+    "repositories": {
+        "magento": {
+          "type":"git", 
+          "url":"https://github.com/firegento/magento"
+        },
+        "firegento": {
+          "type": "composer",
+          "url": "http://packages.firegento.com"
         }
-    ],
+    },
     "require": {
-        "firegento/magento": "1.9.1.1+patch2",
+      "magento-hackathon/magento-composer-installer": "~3.0",
+      "aydin-hassan/magento-core-composer-installer": "~1.2",
+      "firegento/magento": "~1.9.2"
     },
-    "scripts": {
-        "post-install-cmd": [
-            "cp -R vendor/magento/magento/* path/To/My/Magento/Root/Directory/"
-        ],
-        "post-update-cmd": [
-            "cp -R vendor/magento/magento/* path/To/My/Magento/Root/Directory/"
-        ]
-    },
+    "extra": {
+      "magento-root-dir": "src",
+      "auto-append-gitignore": true,
+      "magento-deploystrategy": "copy",
+      "magento-force": true
+    }
 }
 ```
 
-To run it: 
+To install magento:
 
-```
-composer.phar install -vv
-```
+* create webroot src
+* run `composer install`
 
-This will download the version `1.9.1.1+patch2` from GitHub, 
-unzips it and places the files in the folder `vendor/magento/magento`. 
+To update magento:
 
-A post install/update script copies those files to your root folder. 
-If you want to update to the next version simply replace `1.9.1.1+patch2` with the next version. 
-
-There are typos in the above JSON to prevent you from blind copying. 
-If you think this feels wrong please suggest an alternative way via an issue.
-
-### Tags
-
-All tags are signed with my *Cyrill AT Schumacher dot fm* [PGP key](http://www.schumacher.fm/cyrill.asc).
+* run `composer update`
