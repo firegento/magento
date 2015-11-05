@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Abstract.php 25229 2013-01-18 08:17:21Z frosch $
+ * @version    $Id$
  */
 
 
@@ -37,7 +37,7 @@
  * @category   Zend
  * @package    Zend_Db
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Db_Adapter_Abstract
@@ -930,13 +930,7 @@ abstract class Zend_Db_Adapter_Abstract
         if ($count === null) {
             return str_replace('?', $this->quote($value, $type), $text);
         } else {
-            while ($count > 0) {
-                if (strpos($text, '?') !== false) {
-                    $text = substr_replace($text, $this->quote($value, $type), strpos($text, '?'), 1);
-                }
-                --$count;
-            }
-            return $text;
+            return implode($this->quote($value, $type), explode('?', $text, $count + 1));
         }
     }
 
@@ -1127,10 +1121,15 @@ abstract class Zend_Db_Adapter_Abstract
         if ($this->_allowSerialization == false) {
             /** @see Zend_Db_Adapter_Exception */
             #require_once 'Zend/Db/Adapter/Exception.php';
-            throw new Zend_Db_Adapter_Exception(get_class($this) ." is not allowed to be serialized");
+            throw new Zend_Db_Adapter_Exception(
+                get_class($this) . ' is not allowed to be serialized'
+            );
         }
-        $this->_connection = false;
-        return array_keys(array_diff_key(get_object_vars($this), array('_connection'=>false)));
+        $this->_connection = null;
+
+        return array_keys(
+            array_diff_key(get_object_vars($this), array('_connection' => null))
+        );
     }
 
     /**

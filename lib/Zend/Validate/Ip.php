@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Ip.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 /**
@@ -27,7 +27,7 @@
 /**
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate_Ip extends Zend_Validate_Abstract
@@ -57,7 +57,6 @@ class Zend_Validate_Ip extends Zend_Validate_Abstract
      * Sets validator options
      *
      * @param array $options OPTIONAL Options to set, see the manual for all available options
-     * @return void
      */
     public function __construct($options = array())
     {
@@ -91,6 +90,7 @@ class Zend_Validate_Ip extends Zend_Validate_Abstract
      * Sets the options for this validator
      *
      * @param array $options
+     * @throws Zend_Validate_Exception
      * @return Zend_Validate_Ip
      */
     public function setOptions($options)
@@ -141,6 +141,7 @@ class Zend_Validate_Ip extends Zend_Validate_Abstract
      * Validates an IPv4 address
      *
      * @param string $value
+     * @return bool
      */
     protected function _validateIPv4($value) {
         $ip2long = ip2long($value);

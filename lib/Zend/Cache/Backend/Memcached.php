@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Cache
  * @subpackage Zend_Cache_Backend
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Memcached.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 
@@ -35,7 +35,7 @@
 /**
  * @package    Zend_Cache
  * @subpackage Zend_Cache_Backend
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Cache_Backend_Memcached extends Zend_Cache_Backend implements Zend_Cache_Backend_ExtendedInterface
@@ -390,7 +390,12 @@ class Zend_Cache_Backend_Memcached extends Zend_Cache_Backend implements Zend_Ca
             }
 
             $eachSize = $mem['limit_maxbytes'];
-            $eachUsed = $mem['bytes'];
+
+            /**
+             * Couchbase 1.x uses 'mem_used' instead of 'bytes'
+             * @see https://www.couchbase.com/issues/browse/MB-3466
+             */
+            $eachUsed = isset($mem['bytes']) ? $mem['bytes'] : $mem['mem_used'];
             if ($eachUsed > $eachSize) {
                 $eachUsed = $eachSize;
             }

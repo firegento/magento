@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Amf
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Server.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 /** @see Zend_Server_Interface */
@@ -52,7 +52,7 @@
  * @todo       Make the reflection methods cache and autoload.
  * @package    Zend_Amf
  * @subpackage Server
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Amf_Server implements Zend_Server_Interface
@@ -767,9 +767,9 @@ class Zend_Amf_Server implements Zend_Server_Interface
             throw new Zend_Amf_Server_Exception('Invalid method or class; must be a classname or object');
         }
 
-        $argv = null;
+        $args = null;
         if (2 < func_num_args()) {
-            $argv = array_slice(func_get_args(), 2);
+            $args = array_slice(func_get_args(), 2);
         }
 
         // Use the class name as the name space by default.
@@ -780,7 +780,7 @@ class Zend_Amf_Server implements Zend_Server_Interface
 
         $this->_classAllowed[is_object($class) ? get_class($class) : $class] = true;
 
-        $this->_methods[] = Zend_Server_Reflection::reflectClass($class, $argv, $namespace);
+        $this->_methods[] = Zend_Server_Reflection::reflectClass($class, $args, $namespace);
         $this->_buildDispatchTable();
 
         return $this;

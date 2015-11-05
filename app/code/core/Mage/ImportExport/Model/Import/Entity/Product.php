@@ -10,18 +10,18 @@
  * http://opensource.org/licenses/osl-3.0.php
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
+ * to license@magento.com so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Magento to newer
  * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
+ * needs please refer to http://www.magento.com for more information.
  *
  * @category    Mage
  * @package     Mage_ImportExport
- * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
- * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @copyright  Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
 /**
@@ -822,6 +822,7 @@ class Mage_ImportExport_Model_Import_Entity_Product extends Mage_ImportExport_Mo
             'multiple'  => true
         );
 
+        $alreadyUsedProductIds = array();
         while ($bunch = $this->_dataSourceModel->getNextBunch()) {
             $customOptions = array(
                 'product_id'    => array(),
@@ -961,10 +962,14 @@ class Mage_ImportExport_Model_Import_Entity_Product extends Mage_ImportExport_Mo
                     $customOptions[$titleTable][$prevOptionId][$storeId] = $rowData['_custom_option_title'];
                 }
             }
-            if ($this->getBehavior() != Mage_ImportExport_Model_Import::BEHAVIOR_APPEND) { // remove old data?
+            $productIds = array_keys($customOptions['product_id']);
+            $productIds = array_diff($productIds, $alreadyUsedProductIds);
+            if ($this->getBehavior() != Mage_ImportExport_Model_Import::BEHAVIOR_APPEND
+                && !empty($productIds)
+            ) { // remove old data?
                 $this->_connection->delete(
                     $optionTable,
-                    $this->_connection->quoteInto('product_id IN (?)', array_keys($customOptions['product_id']))
+                    $this->_connection->quoteInto('product_id IN (?)', $productIds)
                 );
             }
             // if complex options does not contain values - ignore them
@@ -978,8 +983,6 @@ class Mage_ImportExport_Model_Import_Entity_Product extends Mage_ImportExport_Mo
 
             if ($customOptions[$optionTable]) {
                 $this->_connection->insertMultiple($optionTable, $customOptions[$optionTable]);
-            } else {
-                continue; // nothing to save
             }
             $titleRows = array();
 
@@ -1038,13 +1041,23 @@ class Mage_ImportExport_Model_Import_Entity_Product extends Mage_ImportExport_Mo
             if ($optionTypeTitleRows) {
                 $this->_connection->insertOnDuplicate($typeTitleTable, $optionTypeTitleRows, array('title'));
             }
-            if ($customOptions['product_id']) { // update product entity table to show that product has options
+
+            if ($productIds) { // update product entity table to show that product has options
+                $customOptionsProducts = $customOptions['product_id'];
+
+                foreach ($customOptionsProducts as $key => $value) {
+                    if (!in_array($key, $productIds)) {
+                        unset($customOptionsProducts[$key]);
+                    }
+                }
                 $this->_connection->insertOnDuplicate(
                     $productTable,
-                    $customOptions['product_id'],
+                    $customOptionsProducts,
                     array('has_options', 'required_options', 'updated_at')
                 );
             }
+
+            $alreadyUsedProductIds = array_merge($alreadyUsedProductIds, $productIds);
         }
         return $this;
     }
@@ -1408,7 +1421,7 @@ class Mage_ImportExport_Model_Import_Entity_Product extends Mage_ImportExport_Mo
                 }
                 $rowData = $this->_productTypeModels[$productType]->prepareAttributesForSave(
                     $rowData,
-                    !isset($this->_oldSku[$rowSku])
+                    !isset($this->_oldSku[$rowSku]) && (self::SCOPE_DEFAULT == $rowScope)
                 );
                 try {
                     $attributes = $this->_prepareAttributes($rowData, $rowScope, $attributes, $rowSku, $rowStore);

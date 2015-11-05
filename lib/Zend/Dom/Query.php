@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Dom
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Query.php 25033 2012-08-17 19:50:08Z matthew $
+ * @version    $Id$
  */
 
 /**
@@ -29,12 +29,18 @@
  */
 #require_once 'Zend/Dom/Query/Result.php';
 
+/** @see Zend_Xml_Security */
+#require_once 'Zend/Xml/Security.php';
+
+/** @see Zend_Xml_Exception */
+#require_once 'Zend/Xml/Exception.php';
+
 /**
  * Query DOM structures based on CSS selectors and/or XPath
  *
  * @package    Zend_Dom
  * @subpackage Query
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Dom_Query
@@ -42,13 +48,14 @@ class Zend_Dom_Query
     /**#@+
      * Document types
      */
+    const DOC_DOM   = 'docDom';
     const DOC_XML   = 'docXml';
     const DOC_HTML  = 'docHtml';
     const DOC_XHTML = 'docXhtml';
     /**#@-*/
 
     /**
-     * @var string
+     * @var string|DOMDocument
      */
     protected $_document;
 
@@ -79,8 +86,8 @@ class Zend_Dom_Query
     /**
      * Constructor
      *
-     * @param  null|string $document
-     * @return void
+     * @param null|string|DOMDocument $document
+     * @param null|string $encoding
      */
     public function __construct($document = null, $encoding = null)
     {
@@ -113,12 +120,15 @@ class Zend_Dom_Query
     /**
      * Set document to query
      *
-     * @param  string $document
+     * @param  string|DOMDocument $document
      * @param  null|string $encoding Document encoding
      * @return Zend_Dom_Query
      */
     public function setDocument($document, $encoding = null)
     {
+        if ($document instanceof DOMDocument) {
+            return $this->setDocumentDom($document);
+        }
         if (0 === strlen($document)) {
             return $this;
         }
@@ -134,6 +144,22 @@ class Zend_Dom_Query
             return $this->setDocumentXhtml($document, $encoding);
         }
         return $this->setDocumentHtml($document, $encoding);
+    }
+
+    /**
+     * Set DOMDocument to query
+     *
+     * @param  DOMDocument $document
+     * @return Zend_Dom_Query
+     */
+    public function setDocumentDom(DOMDocument $document)
+    {
+        $this->_document = $document;
+        $this->_docType  = self::DOC_DOM;
+        if (null !== $document->encoding) {
+            $this->setEncoding($document->encoding);
+        }
+        return $this;
     }
 
     /**
@@ -190,7 +216,7 @@ class Zend_Dom_Query
     /**
      * Retrieve current document
      *
-     * @return string
+     * @return string|DOMDocument
      */
     public function getDocument()
     {
@@ -233,7 +259,8 @@ class Zend_Dom_Query
      * Perform an XPath query
      *
      * @param  string|array $xpathQuery
-     * @param  string $query CSS selector query
+     * @param  string       $query CSS selector query
+     * @throws Zend_Dom_Exception
      * @return Zend_Dom_Query_Result
      */
     public function queryXpath($xpathQuery, $query = null)
@@ -245,7 +272,6 @@ class Zend_Dom_Query
 
         $encoding = $this->getEncoding();
         libxml_use_internal_errors(true);
-        libxml_disable_entity_loader(true);
         if (null === $encoding) {
             $domDoc = new DOMDocument('1.0');
         } else {
@@ -253,15 +279,19 @@ class Zend_Dom_Query
         }
         $type   = $this->getDocumentType();
         switch ($type) {
+            case self::DOC_DOM:
+                $domDoc = $this->_document;
+                $success = true;
+                break;
             case self::DOC_XML:
-                $success = $domDoc->loadXML($document);
-                foreach ($domDoc->childNodes as $child) {
-                    if ($child->nodeType === XML_DOCUMENT_TYPE_NODE) {
-                        #require_once 'Zend/Dom/Exception.php';
-                        throw new Zend_Dom_Exception(
-                            'Invalid XML: Detected use of illegal DOCTYPE'
-                        );
-                    }
+                try {
+                    $domDoc = Zend_Xml_Security::scan($document, $domDoc);
+                    $success = ($domDoc !== false);
+                } catch (Zend_Xml_Exception $e) {
+                    #require_once 'Zend/Dom/Exception.php';
+                    throw new Zend_Dom_Exception(
+                        $e->getMessage()
+                    );
                 }
                 break;
             case self::DOC_HTML:
@@ -275,7 +305,6 @@ class Zend_Dom_Query
             $this->_documentErrors = $errors;
             libxml_clear_errors();
         }
-        libxml_disable_entity_loader(false);
         libxml_use_internal_errors(false);
 
         if (!$success) {
@@ -283,15 +312,14 @@ class Zend_Dom_Query
             throw new Zend_Dom_Exception(sprintf('Error parsing document (type == %s)', $type));
         }
 
-        $nodeList   = $this->_getNodeList($domDoc, $xpathQuery);
+        $nodeList = $this->_getNodeList($domDoc, $xpathQuery);
         return new Zend_Dom_Query_Result($query, $xpathQuery, $domDoc, $nodeList);
     }
 
     /**
      * Register XPath namespaces
      *
-     * @param   array $xpathNamespaces
-     * @return  void
+     * @param array $xpathNamespaces
      */
     public function registerXpathNamespaces($xpathNamespaces)
     {

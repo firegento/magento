@@ -10,18 +10,18 @@
  * http://opensource.org/licenses/osl-3.0.php
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
+ * to license@magento.com so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Magento to newer
  * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
+ * needs please refer to http://www.magento.com for more information.
  *
  * @category    Mage
  * @package     Mage_Sales
- * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
- * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @copyright  Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
 /**
@@ -42,10 +42,35 @@ class Mage_Sales_Block_Order_Recent extends Mage_Core_Block_Template
         //TODO: add full name logic
         $orders = Mage::getResourceModel('sales/order_collection')
             ->addAttributeToSelect('*')
-            ->joinAttribute('shipping_firstname', 'order_address/firstname', 'shipping_address_id', null, 'left')
-            ->joinAttribute('shipping_lastname', 'order_address/lastname', 'shipping_address_id', null, 'left')
-            ->addAttributeToFilter('customer_id', Mage::getSingleton('customer/session')->getCustomer()->getId())
-            ->addAttributeToFilter('state', array('in' => Mage::getSingleton('sales/order_config')->getVisibleOnFrontStates()))
+            ->joinAttribute(
+                'shipping_firstname',
+                'order_address/firstname',
+                'shipping_address_id',
+                null,
+                'left'
+            )
+            ->joinAttribute(
+                'shipping_middlename',
+                'order_address/middlename',
+                'shipping_address_id',
+                null,
+                'left'
+            )
+            ->joinAttribute(
+                'shipping_lastname',
+                'order_address/lastname',
+                'shipping_address_id',
+                null,
+                'left'
+            )
+            ->addAttributeToFilter(
+                'customer_id',
+                Mage::getSingleton('customer/session')->getCustomer()->getId()
+            )
+            ->addAttributeToFilter(
+                'state',
+                array('in' => Mage::getSingleton('sales/order_config')->getVisibleOnFrontStates())
+            )
             ->addAttributeToSort('created_at', 'desc')
             ->setPageSize('5')
             ->load()

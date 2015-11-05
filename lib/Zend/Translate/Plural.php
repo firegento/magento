@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Locale
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Plural.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 /**
@@ -24,7 +24,7 @@
  *
  * @category   Zend
  * @package    Zend_Locale
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Translate_Plural
@@ -65,6 +65,7 @@ class Zend_Translate_Plural
         }
 
         switch($locale) {
+            case 'az':
             case 'bo':
             case 'dz':
             case 'id':
@@ -83,7 +84,6 @@ class Zend_Translate_Plural
                 break;
 
             case 'af':
-            case 'az':
             case 'bn':
             case 'bg':
             case 'ca':

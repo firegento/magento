@@ -10,18 +10,18 @@
  * http://opensource.org/licenses/osl-3.0.php
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
+ * to license@magento.com so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Magento to newer
  * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
+ * needs please refer to http://www.magento.com for more information.
  *
  * @category    Mage
  * @package     Mage_Paypal
- * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
- * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @copyright  Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
 /**
@@ -430,15 +430,17 @@ class Mage_Paypal_Model_Express_Checkout
         if (!$quote->getIsVirtual()) {
             $shippingAddress = $quote->getShippingAddress();
             if ($shippingAddress) {
-                if ($exportedShippingAddress
-                    && $quote->getPayment()->getAdditionalInformation(self::PAYMENT_INFO_BUTTON) == 1
-                ) {
+                if ($exportedShippingAddress) {
                     $this->_setExportedAddressData($shippingAddress, $exportedShippingAddress);
-                    // PayPal doesn't provide detailed shipping info: prefix, middlename, lastname, suffix
-                    $shippingAddress->setPrefix(null);
-                    $shippingAddress->setMiddlename(null);
-                    $shippingAddress->setLastname(null);
-                    $shippingAddress->setSuffix(null);
+
+                    if ($quote->getPayment()->getAdditionalInformation(self::PAYMENT_INFO_BUTTON) == 1) {
+                        // PayPal doesn't provide detailed shipping info: prefix, middlename, lastname, suffix
+                        $shippingAddress->setPrefix(null);
+                        $shippingAddress->setMiddlename(null);
+                        $shippingAddress->setLastname(null);
+                        $shippingAddress->setSuffix(null);
+                    }
+
                     $shippingAddress->setCollectShippingRates(true);
                     $shippingAddress->setSameAsBilling(0);
                 }
@@ -608,6 +610,7 @@ class Mage_Paypal_Model_Express_Checkout
         $this->_recurringPaymentProfiles = $service->getRecurringPaymentProfiles();
         // TODO: send recurring profile emails
 
+        /** @var $order Mage_Sales_Model_Order */
         $order = $service->getOrder();
         if (!$order) {
             return;
@@ -630,7 +633,7 @@ class Mage_Paypal_Model_Express_Checkout
             case Mage_Sales_Model_Order::STATE_PROCESSING:
             case Mage_Sales_Model_Order::STATE_COMPLETE:
             case Mage_Sales_Model_Order::STATE_PAYMENT_REVIEW:
-                $order->sendNewOrderEmail();
+                $order->queueNewOrderEmail();
                 break;
         }
         $this->_order = $order;

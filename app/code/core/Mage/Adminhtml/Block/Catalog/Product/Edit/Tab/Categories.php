@@ -10,18 +10,18 @@
  * http://opensource.org/licenses/osl-3.0.php
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
+ * to license@magento.com so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Magento to newer
  * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
+ * needs please refer to http://www.magento.com for more information.
  *
  * @category    Mage
  * @package     Mage_Adminhtml
- * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
- * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @copyright  Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
 /**
@@ -185,22 +185,16 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Categories extends Mage_Admi
      */
     protected function _isParentSelectedCategory($node)
     {
-        $result = false;
-        // Contains string with all category IDs of children (not exactly direct) of the node
-        $allChildren = $node->getAllChildren();
-        if ($allChildren) {
-            $selectedCategoryIds = $this->getCategoryIds();
-            $allChildrenArr = explode(',', $allChildren);
-            for ($i = 0, $cnt = count($selectedCategoryIds); $i < $cnt; $i++) {
-                $isSelf = $node->getId() == $selectedCategoryIds[$i];
-                if (!$isSelf && in_array($selectedCategoryIds[$i], $allChildrenArr)) {
-                    $result = true;
-                    break;
+        foreach ($this->_getSelectedNodes() as $selected) {
+            if ($selected) {
+                $pathIds = explode('/', $selected->getPathId());
+                if (in_array($node->getId(), $pathIds)) {
+                    return true;
                 }
             }
         }
 
-        return $result;
+        return false;
     }
 
     /**
@@ -273,9 +267,12 @@ class Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Categories extends Mage_Admi
         $collection = Mage::getResourceModel('catalog/category_collection');
 
         if ($rootId) {
-            $collection->addFieldToFilter('parent_id', $rootId);
+            $collection->addFieldToFilter(array(
+                array('attribute' => 'parent_id', 'eq' => $rootId),
+                array('attribute' => 'entity_id', 'in' => $categoryIds)
+            ));
         } else {
-            $collection->addFieldToFilter('entity_id', array('in'=>$categoryIds));
+            $collection->addFieldToFilter('entity_id', array('in' => $categoryIds));
         }
 
         foreach ($collection as $item) {

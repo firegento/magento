@@ -10,18 +10,18 @@
  * http://opensource.org/licenses/osl-3.0.php
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
+ * to license@magento.com so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Magento to newer
  * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
+ * needs please refer to http://www.magento.com for more information.
  *
  * @category    Mage
  * @package     Mage_Checkout
- * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
- * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @copyright  Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
 /**
@@ -231,19 +231,19 @@ class Mage_Checkout_Helper_Data extends Mage_Core_Helper_Abstract
                 Mage::getStoreConfig('checkout/payment_failed/identity', $checkout->getStoreId()),
                 $recipient['email'],
                 $recipient['name'],
-                array(
-                    'reason' => $message,
-                    'checkoutType' => $checkoutType,
-                    'dateAndTime' => Mage::app()->getLocale()->date(),
-                    'customer' => $checkout->getCustomerFirstname() . ' ' . $checkout->getCustomerLastname(),
-                    'customerEmail' => $checkout->getCustomerEmail(),
-                    'billingAddress' => $checkout->getBillingAddress(),
-                    'shippingAddress' => $checkout->getShippingAddress(),
-                    'shippingMethod' => Mage::getStoreConfig('carriers/'.$shippingMethod.'/title'),
-                    'paymentMethod' => Mage::getStoreConfig('payment/'.$paymentMethod.'/title'),
-                    'items' => nl2br($items),
-                    'total' => $total
-                )
+                    array(
+                        'reason'          => $message,
+                        'checkoutType'    => $checkoutType,
+                        'dateAndTime'     => Mage::app()->getLocale()->date(),
+                        'customer'        => Mage::helper('customer')->getFullCustomerName($checkout),
+                        'customerEmail'   => $checkout->getCustomerEmail(),
+                        'billingAddress'  => $checkout->getBillingAddress(),
+                        'shippingAddress' => $checkout->getShippingAddress(),
+                        'shippingMethod'  => Mage::getStoreConfig('carriers/' . $shippingMethod . '/title'),
+                        'paymentMethod'   => Mage::getStoreConfig('payment/' . $paymentMethod . '/title'),
+                        'items'           => nl2br($items),
+                        'total'           => $total,
+                    )
             );
         }
 

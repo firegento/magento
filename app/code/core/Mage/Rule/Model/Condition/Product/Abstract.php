@@ -10,18 +10,18 @@
  * http://opensource.org/licenses/osl-3.0.php
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
+ * to license@magento.com so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Magento to newer
  * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
+ * needs please refer to http://www.magento.com for more information.
  *
  * @category    Mage
  * @package     Mage_Rule
- * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
- * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @copyright  Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
 /**
@@ -113,7 +113,7 @@ abstract class Mage_Rule_Model_Condition_Product_Abstract extends Mage_Rule_Mode
     {
         $alias     = 'cpf';
         $attribute = $this->getAttribute();
-        $value     = $this->getValue();
+        $value     = $this->getValueParsed();
         $operator  = $this->correctOperator($this->getOperator(), $this->getInputType());
         if ($attribute == 'category_ids') {
             $alias     = 'ccp';
@@ -308,7 +308,11 @@ abstract class Mage_Rule_Model_Condition_Product_Abstract extends Mage_Rule_Mode
         }
 
         if (!empty($image)) {
-            $html = '<a href="javascript:void(0)" class="rule-chooser-trigger"><img src="' . $image . '" alt="" class="v-middle rule-chooser-trigger" title="' . Mage::helper('rule')->__('Open Chooser') . '" /></a>';
+            $html = '<a href="javascript:void(0)" class="rule-chooser-trigger"><img src="'
+                . $image
+                . '" alt="" class="v-middle rule-chooser-trigger" title="'
+                . Mage::helper('core')->quoteEscape(Mage::helper('rule')->__('Open Chooser'))
+                . '" /></a>';
         }
         return $html;
     }

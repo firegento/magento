@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Oauth
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Client.php 25167 2012-12-19 16:28:01Z matthew $
+ * @version    $Id$
  */
 
 /** Zend_Oauth */
@@ -34,7 +34,7 @@
 /**
  * @category   Zend
  * @package    Zend_Oauth
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Oauth_Client extends Zend_Http_Client
@@ -292,27 +292,20 @@ class Zend_Oauth_Client extends Zend_Http_Client
 
     /**
      * Collect all signable parameters into a single array across query string
-     * and POST body. These are returned as a properly formatted single
-     * query string.
+     * and POST body. Don't include POST parameters if content type is multipart POST.
      *
-     * @return string
+     * @return array
      */
     protected function _getSignableParametersAsQueryString()
     {
         $params = array();
-            if (!empty($this->paramsGet)) {
-                $params = array_merge($params, $this->paramsGet);
-                $query  = $this->getToken()->toQueryString(
-                    $this->getUri(true), $this->_config, $params
-                );
-            }
-            if (!empty($this->paramsPost)) {
-                $params = array_merge($params, $this->paramsPost);
-                $query  = $this->getToken()->toQueryString(
-                    $this->getUri(true), $this->_config, $params
-                );
-            }
-            return $params;
+        if (!empty($this->paramsGet)) {
+            $params = array_merge($params, $this->paramsGet);
+        }
+        if ($this->enctype != self::ENC_FORMDATA && !empty($this->paramsPost)) {
+            $params = array_merge($params, $this->paramsPost);
+        }
+        return $params;
     }
 
     /**

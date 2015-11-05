@@ -10,18 +10,18 @@
  * http://opensource.org/licenses/osl-3.0.php
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
+ * to license@magento.com so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Magento to newer
  * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
+ * needs please refer to http://www.magento.com for more information.
  *
  * @category    Mage
  * @package     Mage_Reports
- * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
- * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @copyright  Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
 /**
@@ -32,6 +32,20 @@ class Mage_Reports_Helper_Data extends Mage_Core_Helper_Abstract
     const REPORT_PERIOD_TYPE_DAY    = 'day';
     const REPORT_PERIOD_TYPE_MONTH  = 'month';
     const REPORT_PERIOD_TYPE_YEAR   = 'year';
+
+    const XML_PATH_REPORTS_ENABLED  = 'reports/general/enabled';
+
+    /**
+     * Return reports flag enabled.
+     *
+     * @return boolean
+     */
+
+    public function isReportsEnabled()
+    {
+        return Mage::getStoreConfigFlag(self::XML_PATH_REPORTS_ENABLED);
+    }
+
     /**
      * Retrieve array of intervals
      *

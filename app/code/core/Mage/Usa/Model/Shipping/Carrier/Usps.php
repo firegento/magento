@@ -10,18 +10,18 @@
  * http://opensource.org/licenses/osl-3.0.php
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
+ * to license@magento.com so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Magento to newer
  * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
+ * needs please refer to http://www.magento.com for more information.
  *
  * @category    Mage
  * @package     Mage_Usa
- * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
- * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @copyright  Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
 
@@ -340,6 +340,10 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
             if ($r->getService() == 'FIRST CLASS' || $r->getService() == 'FIRST CLASS HFP COMMERCIAL') {
                 $package->addChild('FirstClassMailType', 'PARCEL');
             }
+            if ($r->getService() == 'FIRST CLASS COMMERCIAL') {
+                $package->addChild('FirstClassMailType', 'PACKAGE SERVICE');
+            }
+
             $package->addChild('ZipOrigination', $r->getOrigPostal());
             //only 5 chars available
             $package->addChild('ZipDestination', substr($r->getDestPostal(), 0, 5));
@@ -388,7 +392,10 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
             $package->addChild('Height', $height);
             $package->addChild('Girth', $girth);
 
-
+            if ($this->_isCanada($r->getDestCountryId())) {
+                //only 5 chars available
+                $package->addChild('OriginZip', substr($r->getOrigPostal(), 0, 5));
+            }
             $api = 'IntlRateV2';
         }
         $request = $xml->asXML();
@@ -473,6 +480,9 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
                      else {
                         if (is_object($xml->Package) && is_object($xml->Package->Service)) {
                             foreach ($xml->Package->Service as $service) {
+                                if ($service->ServiceErrors->count()) {
+                                    continue;
+                                }
                                 $serviceName = $this->_filterServiceName((string)$service->SvcDescription);
                                 $serviceCode = 'INT_' . (string)$service->attributes()->ID;
                                 $serviceCodeToActualNameMap[$serviceCode] = $serviceName;
@@ -535,8 +545,8 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
                  '2'      => Mage::helper('usa')->__('Priority Mail Express Hold For Pickup'),
                  '3'      => Mage::helper('usa')->__('Priority Mail Express'),
                  '4'      => Mage::helper('usa')->__('Standard Post'),
-                 '6'      => Mage::helper('usa')->__('Media Mail'),
-                 '7'      => Mage::helper('usa')->__('Library Mail'),
+                 '6'      => Mage::helper('usa')->__('Media Mail Parcel'),
+                 '7'      => Mage::helper('usa')->__('Library Mail Parcel'),
                  '13'     => Mage::helper('usa')->__('Priority Mail Express Flat Rate Envelope'),
                  '15'     => Mage::helper('usa')->__('First-Class Mail Large Postcards'),
                  '16'     => Mage::helper('usa')->__('Priority Mail Flat Rate Envelope'),
@@ -1395,9 +1405,9 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
      *
      * @param Varien_Object $request
      * @param string $serviceType
-     * 
+     *
      * @throws Exception
-     * 
+     *
      * @return string
      */
     protected function _formUsSignatureConfirmationShipmentRequest(Varien_Object $request, $serviceType)
@@ -1947,7 +1957,7 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
     {
         return $this->_methodsMapper($label, false);
     }
-    
+
     /**
       * @deprecated
       */

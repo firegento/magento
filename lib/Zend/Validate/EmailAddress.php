@@ -14,9 +14,9 @@
  *
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: EmailAddress.php 25057 2012-11-02 20:35:40Z rob $
+ * @version    $Id$
  */
 
 /**
@@ -32,7 +32,7 @@
 /**
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate_EmailAddress extends Zend_Validate_Abstract
@@ -63,7 +63,7 @@ class Zend_Validate_EmailAddress extends Zend_Validate_Abstract
     );
 
     /**
-     * As of RFC5753 (JAN 2010), the following blocks are no logner reserved:
+     * As of RFC5753 (JAN 2010), the following blocks are no longer reserved:
      *   - 128.0.0.0/16
      *   - 191.255.0.0/16
      *   - 223.255.255.0/24
@@ -132,8 +132,7 @@ class Zend_Validate_EmailAddress extends Zend_Validate_Abstract
      * 'mx'       => If MX check should be enabled, boolean
      * 'deep'     => If a deep MX check should be done, boolean
      *
-     * @param array|Zend_Config $options OPTIONAL
-     * @return void
+     * @param array|string|Zend_Config $options OPTIONAL
      */
     public function __construct($options = array())
     {
@@ -171,7 +170,7 @@ class Zend_Validate_EmailAddress extends Zend_Validate_Abstract
      * Set options for the email validator
      *
      * @param array $options
-     * @return Zend_Validate_EmailAddress fluid interface
+     * @return Zend_Validate_EmailAddress Provides a fluent inteface
      */
     public function setOptions(array $options = array())
     {
@@ -242,7 +241,7 @@ class Zend_Validate_EmailAddress extends Zend_Validate_Abstract
     /**
      * @param Zend_Validate_Hostname $hostnameValidator OPTIONAL
      * @param int                    $allow             OPTIONAL
-     * @return void
+     * @return $this
      */
     public function setHostnameValidator(Zend_Validate_Hostname $hostnameValidator = null, $allow = Zend_Validate_Hostname::ALLOW_DNS)
     {
@@ -283,7 +282,8 @@ class Zend_Validate_EmailAddress extends Zend_Validate_Abstract
      * This only applies when DNS hostnames are validated
      *
      * @param boolean $mx Set allowed to true to validate for MX records, and false to not validate them
-     * @return Zend_Validate_EmailAddress Fluid Interface
+     * @throws Zend_Validate_Exception
+     * @return Zend_Validate_EmailAddress Provides a fluent inteface
      */
     public function setValidateMx($mx)
     {
@@ -310,7 +310,7 @@ class Zend_Validate_EmailAddress extends Zend_Validate_Abstract
      * Set whether we check MX record should be a deep validation
      *
      * @param boolean $deep Set deep to true to perform a deep validation process for MX records
-     * @return Zend_Validate_EmailAddress Fluid Interface
+     * @return Zend_Validate_EmailAddress Provides a fluent inteface
      */
     public function setDeepMxCheck($deep)
     {
@@ -333,7 +333,7 @@ class Zend_Validate_EmailAddress extends Zend_Validate_Abstract
      * or only the local part of the email address
      *
      * @param boolean $domain
-     * @return Zend_Validate_EmailAddress Fluid Interface
+     * @return Zend_Validate_EmailAddress Provides a fluent inteface
      */
     public function setDomainCheck($domain = true)
     {
@@ -424,15 +424,12 @@ class Zend_Validate_EmailAddress extends Zend_Validate_Abstract
         if (preg_match('/^[' . $atext . ']+(\x2e+[' . $atext . ']+)*$/', $this->_localPart)) {
             $result = true;
         } else {
-            // Try quoted string format
+            // Try quoted string format (RFC 5321 Chapter 4.1.2)
 
-            // Quoted-string characters are: DQUOTE *([FWS] qtext/quoted-pair) [FWS] DQUOTE
-            // qtext: Non white space controls, and the rest of the US-ASCII characters not
-            //   including "\" or the quote character
-            $noWsCtl = '\x01-\x08\x0b\x0c\x0e-\x1f\x7f';
-            $qtext   = $noWsCtl . '\x21\x23-\x5b\x5d-\x7e';
-            $ws      = '\x20\x09';
-            if (preg_match('/^\x22([' . $ws . $qtext . '])*[$ws]?\x22$/', $this->_localPart)) {
+            // Quoted-string characters are: DQUOTE *(qtext/quoted-pair) DQUOTE
+            $qtext      = '\x20-\x21\x23-\x5b\x5d-\x7e'; // %d32-33 / %d35-91 / %d93-126
+            $quotedPair = '\x20-\x7e'; // %d92 %d32-126
+            if (preg_match('/^"(['. $qtext .']|\x5c[' . $quotedPair . '])*"$/', $this->localPart)) {
                 $result = true;
             } else {
                 $this->_error(self::DOT_ATOM);
@@ -452,7 +449,14 @@ class Zend_Validate_EmailAddress extends Zend_Validate_Abstract
     private function _validateMXRecords()
     {
         $mxHosts = array();
-        $result = getmxrr($this->_hostname, $mxHosts);
+        $hostname = $this->_hostname;
+
+        //decode IDN domain name if possible
+        if (function_exists('idn_to_ascii')) {
+            $hostname = idn_to_ascii($this->_hostname);
+        }
+
+        $result = getmxrr($hostname, $mxHosts);
         if (!$result) {
             $this->_error(self::INVALID_MX_RECORD);
         } else if ($this->_options['deep'] && function_exists('checkdnsrr')) {

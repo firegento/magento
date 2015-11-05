@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Auth
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: DbTable.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 
@@ -41,7 +41,7 @@
  * @category   Zend
  * @package    Zend_Auth
  * @subpackage Adapter
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Auth_Adapter_DbTable implements Zend_Auth_Adapter_Interface
@@ -132,7 +132,6 @@ class Zend_Auth_Adapter_DbTable implements Zend_Auth_Adapter_Interface
      * @param  string                   $identityColumn
      * @param  string                   $credentialColumn
      * @param  string                   $credentialTreatment
-     * @return void
      */
     public function __construct(Zend_Db_Adapter_Abstract $zendDb = null, $tableName = null, $identityColumn = null,
                                 $credentialColumn = null, $credentialTreatment = null)

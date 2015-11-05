@@ -10,18 +10,18 @@
  * http://opensource.org/licenses/osl-3.0.php
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
+ * to license@magento.com so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Magento to newer
  * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
+ * needs please refer to http://www.magento.com for more information.
  *
  * @category    Mage
  * @package     Mage_XmlConnect
- * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
- * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @copyright  Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
 /**
@@ -43,8 +43,11 @@ class Mage_XmlConnect_Block_Adminhtml_Template_Edit extends Mage_Adminhtml_Block
         $this->_blockGroup  = 'xmlconnect';
         parent::__construct();
 
-        $this->_updateButton('delete', 'onclick', 'deleteConfirm(\'' . $this->__('Warning: All related AirMail messages will be deleted!')
-            . '\n' . $this->__('Are you sure you want to do this?') .'\', \'' . $this->getDeleteUrl() . '\')'
+        $this->_updateButton('delete', 'onclick', 'deleteConfirm(\''
+            . Mage::helper('core')->quoteEscape(
+                $this->__('Warning: All related AirMail messages will be deleted!'), true)
+            . '\n' . Mage::helper('core')->quoteEscape($this->__('Are you sure you want to do this?'), true)
+            . '\', \'' . $this->getDeleteUrl() . '\')'
         );
         $this->_updateButton('save', 'label', $this->__('Save'));
         $this->_updateButton('save', 'onclick', 'if (editForm.submit()) {disableElements(\'save\')}');

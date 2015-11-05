@@ -17,7 +17,7 @@
  * @package    Zend_Http
  * @subpackage Header
  * @version    $Id$
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -32,6 +32,11 @@
 #require_once "Zend/Http/Header/Exception/RuntimeException.php";
 
 /**
+ * @see Zend_Http_Header_HeaderValue
+ */
+#require_once "Zend/Http/Header/HeaderValue.php";
+
+/**
  * Zend_Http_Client is an implementation of an HTTP client in PHP. The client
  * supports basic features like sending different HTTP requests and handling
  * redirections, as well as more advanced features like proxy settings, HTTP
@@ -41,7 +46,7 @@
  * @category   Zend
  * @package    Zend_Http
  * @subpackage Header
- * @copyright  Copyright (c) 2005-2011 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Http_Header_SetCookie
@@ -63,18 +68,18 @@ class Zend_Http_Header_SetCookie
 
     /**
      * Version
-     * 
+     *
      * @var integer
      */
     protected $version = null;
-    
+
     /**
      * Max Age
-     * 
+     *
      * @var integer
      */
     protected $maxAge = null;
-    
+
     /**
      * Cookie expiry date
      *
@@ -139,7 +144,7 @@ class Zend_Http_Header_SetCookie
                     $headerKey = $keyValue;
                     $headerValue = null;
                 }
-                
+
                 // First K=V pair is always the cookie name and value
                 if ($header->getName() === NULL) {
                     $header->setName($headerKey);
@@ -216,7 +221,7 @@ class Zend_Http_Header_SetCookie
         if ($secure) {
             $this->setSecure($secure);
         }
-        
+
         if ($httponly) {
             $this->setHttponly($httponly);
         }
@@ -239,7 +244,7 @@ class Zend_Http_Header_SetCookie
         if ($this->getName() == '') {
             throw new Zend_Http_Header_Exception_RuntimeException('A cookie name is required to generate a field value for this cookie');
         }
-        
+
         $value = $this->getValue();
         if (strpos($value,'"')!==false) {
             $value = '"'.urlencode(str_replace('"', '', $value)).'"';
@@ -252,12 +257,12 @@ class Zend_Http_Header_SetCookie
         if ($version!==null) {
             $fieldValue .= '; Version=' . $version;
         }
-        
+
         $maxAge = $this->getMaxAge();
         if ($maxAge!==null) {
             $fieldValue .= '; Max-Age=' . $maxAge;
         }
-        
+
         $expires = $this->getExpires();
         if ($expires) {
             $fieldValue .= '; Expires=' . $expires;
@@ -311,6 +316,7 @@ class Zend_Http_Header_SetCookie
      */
     public function setValue($value)
     {
+        Zend_Http_Header_HeaderValue::assertValid($value);
         $this->value = $value;
         return $this;
     }
@@ -325,7 +331,7 @@ class Zend_Http_Header_SetCookie
 
     /**
      * Set version
-     * 
+     *
      * @param integer $version
      */
     public function setVersion($version)
@@ -335,20 +341,20 @@ class Zend_Http_Header_SetCookie
         }
         $this->version = $version;
     }
-    
+
     /**
      * Get version
-     * 
+     *
      * @return integer
      */
     public function getVersion()
     {
         return $this->version;
     }
-    
+
     /**
      * Set Max-Age
-     * 
+     *
      * @param integer $maxAge
      */
     public function setMaxAge($maxAge)
@@ -358,10 +364,10 @@ class Zend_Http_Header_SetCookie
         }
         $this->maxAge = $maxAge;
     }
-    
+
     /**
      * Get Max-Age
-     * 
+     *
      * @return integer
      */
     public function getMaxAge()
@@ -405,6 +411,7 @@ class Zend_Http_Header_SetCookie
      */
     public function setDomain($domain)
     {
+        Zend_Http_Header_HeaderValue::assertValid($domain);
         $this->domain = $domain;
         return $this;
     }
@@ -422,6 +429,7 @@ class Zend_Http_Header_SetCookie
      */
     public function setPath($path)
     {
+        Zend_Http_Header_HeaderValue::assertValid($path);
         $this->path = $path;
         return $this;
     }
@@ -504,15 +512,15 @@ class Zend_Http_Header_SetCookie
         if ($this->getDomain() && (strrpos($requestDomain, $this->getDomain()) !== false)) {
             return false;
         }
-        
+
         if ($this->getPath() && (strpos($path, $this->getPath()) !== 0)) {
             return false;
         }
-        
+
         if ($this->secure && $this->isSecure()!==$isSecure) {
             return false;
         }
-        
+
         return true;
 
     }
@@ -521,7 +529,7 @@ class Zend_Http_Header_SetCookie
     {
         return $this->getFieldName() . ': ' . $this->getFieldValue();
     }
-    
+
     public function __toString()
     {
         return $this->toString();
@@ -542,5 +550,5 @@ class Zend_Http_Header_SetCookie
         return $headerLine;
     }
 
-    
+
 }

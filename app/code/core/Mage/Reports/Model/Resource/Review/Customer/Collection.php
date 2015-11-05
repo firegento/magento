@@ -10,18 +10,18 @@
  * http://opensource.org/licenses/osl-3.0.php
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
+ * to license@magento.com so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Magento to newer
  * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
+ * needs please refer to http://www.magento.com for more information.
  *
  * @category    Mage
  * @package     Mage_Reports
- * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
- * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @copyright  Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
 
@@ -52,6 +52,8 @@ class Mage_Reports_Model_Resource_Review_Customer_Collection extends Mage_Review
         $customer           = Mage::getResourceSingleton('customer/customer');
         /** @var $firstnameAttr Mage_Eav_Model_Entity_Attribute */
         $firstnameAttr      = $customer->getAttribute('firstname');
+        /** @var $firstnameAttr Mage_Eav_Model_Entity_Attribute */
+        $middlenameAttr      = $customer->getAttribute('middlename');
         /** @var $lastnameAttr Mage_Eav_Model_Entity_Attribute */
         $lastnameAttr       = $customer->getAttribute('lastname');
 
@@ -61,28 +63,51 @@ class Mage_Reports_Model_Resource_Review_Customer_Collection extends Mage_Review
             $firstnameField = 'firstname';
         } else {
             $firstnameField = 'value';
-            $firstnameCondition[] = $adapter->quoteInto('table_customer_firstname.attribute_id = ?',
-                (int)$firstnameAttr->getAttributeId());
+            $firstnameCondition[] = $adapter->quoteInto(
+                'table_customer_firstname.attribute_id = ?',
+                (int) $firstnameAttr->getAttributeId()
+            );
         }
 
         $this->getSelect()->joinInner(
             array('table_customer_firstname' => $firstnameAttr->getBackend()->getTable()),
             implode(' AND ', $firstnameCondition),
-            array());
+            array()
+        );
 
+        $middlenameCondition = array('table_customer_middlename.entity_id = detail.customer_id');
+
+        if ($middlenameAttr->getBackend()->isStatic()) {
+            $middlenameField = 'middlename';
+        } else {
+            $middlenameField = 'value';
+            $middlenameCondition[] = $adapter->quoteInto(
+                'table_customer_middlename.attribute_id = ?',
+                (int) $middlenameAttr->getAttributeId()
+            );
+        }
+
+        $this->getSelect()->joinInner(
+            array('table_customer_middlename' => $middlenameAttr->getBackend()->getTable()),
+            implode(' AND ', $middlenameCondition),
+            array()
+        );
 
         $lastnameCondition  = array('table_customer_lastname.entity_id = detail.customer_id');
         if ($lastnameAttr->getBackend()->isStatic()) {
             $lastnameField = 'lastname';
         } else {
             $lastnameField = 'value';
-            $lastnameCondition[] = $adapter->quoteInto('table_customer_lastname.attribute_id = ?',
-                (int)$lastnameAttr->getAttributeId());
+            $lastnameCondition[] = $adapter->quoteInto(
+                'table_customer_lastname.attribute_id = ?',
+                (int) $lastnameAttr->getAttributeId()
+            );
         }
 
         //Prepare fullname field result
         $customerFullname = $adapter->getConcatSql(array(
             "table_customer_firstname.{$firstnameField}",
+            "table_customer_middlename.{$middlenameField}",
             "table_customer_lastname.{$lastnameField}"
         ), ' ');
         $this->getSelect()->reset(Zend_Db_Select::COLUMNS)

@@ -10,17 +10,17 @@
  * http://opensource.org/licenses/afl-3.0.php
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
+ * to license@magento.com so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Magento to newer
  * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
+ * needs please refer to http://www.magento.com for more information.
  *
  * @category    design
  * @package     default_default
- * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
+ * @copyright   Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 /* @var $this Mage_Adminhtml_Block_Catalog_Product_Edit_Tab_Price_Tier */
@@ -80,11 +80,11 @@ var tierPriceRowTemplate = '<tr>'
     <?php endforeach ?>
     + '</select></td>'
     + '<td class="nobr"><input class="<?php echo $_htmlClass ?> qty required-entry validate-greater-than-zero" type="text" name="<?php echo $_htmlName ?>[{{index}}][price_qty]" value="{{qty}}" id="tier_price_row_{{index}}_qty" />'
-    + ' <small class="nobr"><?php echo Mage::helper('catalog')->__("and above")?></small></td>'
+    + ' <small class="nobr"><?php echo Mage::helper('core')->jsQuoteEscape(Mage::helper('catalog')->__('and above')) ?></small></td>'
     + '<td><input class="<?php echo $_htmlClass ?> required-entry <?php echo $_priceValueValidation ?>" type="text" name="<?php echo $_htmlName ?>[{{index}}][price]" value="{{price}}" id="tier_price_row_{{index}}_price" /></td>'
     + '<td class="last"><input type="hidden" name="<?php echo $_htmlName ?>[{{index}}][delete]" class="delete" value="" id="tier_price_row_{{index}}_delete" />'
-    + '<button title="<?php echo Mage::helper('catalog')->__("Delete Tier") ?>" type="button" class="scalable delete icon-btn delete-product-option" id="tier_price_row_{{index}}_delete_button" onclick="return tierPriceControl.deleteItem(event);">'
-    + '<span><span><span><?php echo Mage::helper('catalog')->__("Delete") ?></span></span></span></button></td>'
+    + '<button title="<?php echo Mage::helper('core')->jsQuoteEscape(Mage::helper('catalog')->__("Delete Tier")) ?>" type="button" class="scalable delete icon-btn delete-product-option" id="tier_price_row_{{index}}_delete_button" onclick="return tierPriceControl.deleteItem(event);">'
+    + '<span><span><span><?php echo Mage::helper('core')->jsQuoteEscape(Mage::helper('catalog')->__("Delete")) ?></span></span></span></button></td>'
     + '</tr>';
 
 var tierPriceControl = {

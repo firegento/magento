@@ -15,9 +15,9 @@
  *
  * @category   Zend
  * @package    Zend_Feed
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Rss.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 
@@ -43,7 +43,7 @@
  *
  * @category   Zend
  * @package    Zend_Feed
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Feed_Rss extends Zend_Feed_Abstract
@@ -433,7 +433,8 @@ class Zend_Feed_Rss extends Zend_Feed_Abstract
 
             if (isset($dataentry->category)) {
                 foreach ($dataentry->category as $category) {
-                    $node = $this->_element->createElement('category', $category['term']);
+                    $node = $this->_element->createElement('category');
+                    $node->appendChild($this->_element->createCDATASection($category['term']));
                     if (isset($category['scheme'])) {
                         $node->setAttribute('domain', $category['scheme']);
                     }

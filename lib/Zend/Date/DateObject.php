@@ -14,8 +14,8 @@
  *
  * @category   Zend
  * @package    Zend_Date
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
- * @version    $Id: DateObject.php 24880 2012-06-12 20:35:18Z matthew $
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
+ * @version    $Id$
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -23,7 +23,7 @@
  * @category   Zend
  * @package    Zend_Date
  * @subpackage Zend_Date_DateObject
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 abstract class Zend_Date_DateObject {
@@ -318,7 +318,7 @@ abstract class Zend_Date_DateObject {
             // standard). However, this is not desired, so replacing 
             // all occurrences of "o" not preceded by a backslash 
             // with "Y"
-            $format = preg_replace('/(?<!\\\\)o\b/', 'Y', $format);
+            $format = preg_replace('/(?<!\\\\)o/', 'Y', $format);
             $result = ($gmt) ? @gmdate($format, $timestamp) : @date($format, $timestamp);
             date_default_timezone_set($oldzone);
             return $result;

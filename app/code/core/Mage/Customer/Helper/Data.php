@@ -10,18 +10,18 @@
  * http://opensource.org/licenses/osl-3.0.php
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
+ * to license@magento.com so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Magento to newer
  * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
+ * needs please refer to http://www.magento.com for more information.
  *
  * @category    Mage
  * @package     Mage_Customer
- * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
- * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @copyright  Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
 
@@ -78,6 +78,12 @@ class Mage_Customer_Helper_Data extends Mage_Core_Helper_Abstract
      */
     const XML_PATH_CUSTOMER_RESET_PASSWORD_LINK_EXPIRATION_PERIOD
         = 'default/customer/password/reset_link_expiration_period';
+
+    /**
+     * Configuration path to require admin password on customer password change
+     */
+    const XML_PATH_CUSTOMER_REQUIRE_ADMIN_USER_TO_CHANGE_USER_PASSWORD
+        = 'customer/password/require_admin_user_to_change_user_password';
 
     /**
      * VAT class constants
@@ -140,6 +146,67 @@ class Mage_Customer_Helper_Data extends Mage_Core_Helper_Abstract
     public function getCurrentCustomer()
     {
         return $this->getCustomer();
+    }
+
+    /**
+     * Retrieve full customer name from provided object
+     *
+     * @param Varien_Object $object
+     * @return string
+     */
+    public function getFullCustomerName($object = null)
+    {
+        $name = '';
+        if (is_null($object)) {
+            $name = $this->getCustomerName();
+        } else {
+            $config = Mage::getSingleton('eav/config');
+
+            if (
+                $config->getAttribute('customer', 'prefix')->getIsVisible()
+                && (
+                    $object->getPrefix()
+                    || $object->getCustomerPrefix()
+                    )
+                ) {
+                    $name .= ($object->getPrefix() ? $object->getPrefix() : $object->getCustomerPrefix()) . ' ';
+            }
+
+            $name .= $object->getFirstname() ? $object->getFirstname() : $object->getCustomerFirstname();
+
+            if ($config->getAttribute('customer', 'middlename')->getIsVisible()
+                && (
+                    $object->getMiddlename()
+                    || $object->getCustomerMiddlename()
+                    )
+                ) {
+                    $name .= ' ' . (
+                        $object->getMiddlename()
+                        ? $object->getMiddlename()
+                        : $object->getCustomerMiddlename()
+                    );
+            }
+
+            $name .= ' ' . (
+                $object->getLastname()
+                ? $object->getLastname()
+                : $object->getCustomerLastname()
+            );
+
+            if ($config->getAttribute('customer', 'suffix')->getIsVisible()
+                && (
+                    $object->getSuffix()
+                    || $object->getCustomerSuffix()
+                    )
+                ) {
+                    $name .= ' ' . (
+                        $object->getSuffix()
+                        ? $object->getSuffix()
+                        : $object->getCustomerSuffix()
+                    );
+            }
+        }
+        return $name;
     }
 
     /**
@@ -393,6 +460,16 @@ class Mage_Customer_Helper_Data extends Mage_Core_Helper_Abstract
     public function getResetPasswordLinkExpirationPeriod()
     {
         return (int) Mage::getConfig()->getNode(self::XML_PATH_CUSTOMER_RESET_PASSWORD_LINK_EXPIRATION_PERIOD);
+    }
+
+    /**
+     * Retrieve is require admin password on customer password change
+     *
+     * @return bool
+     */
+    public function getIsRequireAdminUserToChangeUserPassword()
+    {
+        return Mage::getStoreConfigFlag(self::XML_PATH_CUSTOMER_REQUIRE_ADMIN_USER_TO_CHANGE_USER_PASSWORD);
     }
 
     /**

@@ -10,18 +10,18 @@
  * http://opensource.org/licenses/osl-3.0.php
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
+ * to license@magento.com so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Magento to newer
  * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
+ * needs please refer to http://www.magento.com for more information.
  *
  * @category    Mage
  * @package     Mage_Usa
- * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
- * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @copyright  Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
 /**
@@ -430,21 +430,47 @@ class Mage_Usa_Model_Shipping_Carrier_Fedex
     protected function _getQuotes()
     {
         $this->_result = Mage::getModel('shipping/rate_result');
-        // make separate request for Smart Post method
         $allowedMethods = explode(',', $this->getConfigData('allowed_methods'));
         if (in_array(self::RATE_REQUEST_SMARTPOST, $allowedMethods)) {
             $response = $this->_doRatesRequest(self::RATE_REQUEST_SMARTPOST);
             $preparedSmartpost = $this->_prepareRateResponse($response);
-            if (!$preparedSmartpost->getError()) {
-                $this->_result->append($preparedSmartpost);
-            }
+            $this->_result->append($preparedSmartpost);
         }
-        // make general request for all methods
         $response = $this->_doRatesRequest(self::RATE_REQUEST_GENERAL);
         $preparedGeneral = $this->_prepareRateResponse($response);
-        if (!$preparedGeneral->getError() || ($this->_result->getError() && $preparedGeneral->getError())) {
-            $this->_result->append($preparedGeneral);
+        if ($this->_result->getError() && $preparedGeneral->getError()) {
+            return $this->_result->getError();
         }
+        $this->_result->append($preparedGeneral);
+        $this->_removeErrorsIfRateExist();
+
+        return $this->_result;
+    }
+
+    /**
+     * Remove Errors in Case When Rate Exist
+     *
+     * @return Mage_Shipping_Model_Rate_Result
+     */
+    protected function _removeErrorsIfRateExist()
+    {
+        $rateResultExist = false;
+        $rates           = array();
+        foreach ($this->_result->getAllRates() as $rate) {
+            if (!($rate instanceof Mage_Shipping_Model_Rate_Result_Error)) {
+                $rateResultExist = true;
+                $rates[] = $rate;
+            }
+        }
+
+        if ($rateResultExist) {
+            $this->_result->reset();
+            $this->_result->setError(false);
+            foreach ($rates as $rate) {
+                $this->_result->append($rate);
+            }
+        }
+
         return $this->_result;
     }
 

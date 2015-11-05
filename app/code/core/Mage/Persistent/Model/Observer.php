@@ -10,18 +10,18 @@
  * http://opensource.org/licenses/osl-3.0.php
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
+ * to license@magento.com so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Magento to newer
  * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
+ * needs please refer to http://www.magento.com for more information.
  *
  * @category    Mage
  * @package     Mage_Persistent
- * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
- * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @copyright  Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
 
@@ -93,7 +93,19 @@ class Mage_Persistent_Model_Observer
 
         return $this;
     }
-
+    /**
+     * Emulate welcome message with persistent data
+     *
+     * @param Mage_Core_Block_Abstract $block
+     * @return Mage_Persistent_Model_Observer
+     */
+    public function emulateWelcomeMessageBlock($block)
+    {
+        $block->setWelcome(
+            Mage::helper('persistent')->__('Welcome, %s!', Mage::helper('core')->escapeHtml($this->_getPersistentCustomer()->getName(), null))
+        );
+        return $this;
+    }
     /**
      * Emulate 'welcome' block with persistent data
      *
@@ -102,10 +114,6 @@ class Mage_Persistent_Model_Observer
      */
     public function emulateWelcomeBlock($block)
     {
-        $block->setWelcome(
-            Mage::helper('persistent')->__('Welcome, %s!', Mage::helper('core')->escapeHtml($this->_getPersistentCustomer()->getName(), null))
-        );
-
         $this->_applyAccountLinksPersistentData();
         $block->setAdditionalHtml(Mage::app()->getLayout()->getBlock('header.additional')->toHtml());
 
@@ -452,6 +460,7 @@ class Mage_Persistent_Model_Observer
                 ->setCustomerId(null)
                 ->setCustomerEmail(null)
                 ->setCustomerFirstname(null)
+                ->setCustomerMiddlename(null)
                 ->setCustomerLastname(null)
                 ->setCustomerGroupId(Mage_Customer_Model_Group::NOT_LOGGED_IN_ID)
                 ->setIsPersistent(false)

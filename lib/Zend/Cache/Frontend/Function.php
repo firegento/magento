@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Cache
  * @subpackage Zend_Cache_Frontend
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Function.php 24593 2012-01-05 20:35:02Z matthew $
+ * @version    $Id$
  */
 
 
@@ -30,7 +30,7 @@
 /**
  * @package    Zend_Cache
  * @subpackage Zend_Cache_Frontend
- * @copyright  Copyright (c) 2005-2012 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Cache_Frontend_Function extends Zend_Cache_Core
@@ -63,7 +63,7 @@ class Zend_Cache_Frontend_Function extends Zend_Cache_Core
      */
     public function __construct(array $options = array())
     {
-        while (list($name, $value) = each($options)) {
+        foreach ($options as $name => $value) {
             $this->setOption($name, $value);
         }
         $this->setOption('automatic_serialization', true);

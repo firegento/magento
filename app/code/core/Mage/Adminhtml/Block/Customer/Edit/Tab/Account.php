@@ -10,18 +10,18 @@
  * http://opensource.org/licenses/osl-3.0.php
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
+ * to license@magento.com so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Magento to newer
  * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
+ * needs please refer to http://www.magento.com for more information.
  *
  * @category    Mage
  * @package     Mage_Adminhtml
- * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
- * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @copyright  Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
 /**
@@ -98,7 +98,9 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Account extends Mage_Adminhtml_Bloc
                 var {$prefix}_websites = " . Mage::helper('core')->jsonEncode($websites) .";
                 Validation.add(
                     'validate-website-has-store',
-                    '" . Mage::helper('customer')->__('Please select a website which contains store view') . "',
+                    '" . Mage::helper('core')->jsQuoteEscape(
+                        Mage::helper('customer')->__('Please select a website which contains store view')
+                    ) . "',
                     function(v, elem){
                         return {$prefix}_websites[elem.value] == true;
                     }
@@ -200,6 +202,18 @@ class Mage_Adminhtml_Block_Customer_Edit_Tab_Account extends Mage_Adminhtml_Bloc
                         ));
                         $customer->setData('sendemail', '1');
                     }
+                }
+
+                if (Mage::helper('customer')->getIsRequireAdminUserToChangeUserPassword()) {
+                    $field = $newFieldset->addField('current_password', 'obscure',
+                        array(
+                            'name'  => 'current_password',
+                            'label' => Mage::helper('customer')->__('Current Admin Password'),
+                            'title' => Mage::helper('customer')->__('Current Admin Password'),
+                            'required' => true
+                        )
+                    );
+                    $field->setRenderer($this->getLayout()->createBlock('adminhtml/customer_edit_renderer_adminpass'));
                 }
             }
         } else {

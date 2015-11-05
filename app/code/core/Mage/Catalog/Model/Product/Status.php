@@ -10,18 +10,18 @@
  * http://opensource.org/licenses/osl-3.0.php
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
+ * to license@magento.com so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Magento to newer
  * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
+ * needs please refer to http://www.magento.com for more information.
  *
  * @category    Mage
  * @package     Mage_Catalog
- * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
- * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @copyright  Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
 
@@ -248,7 +248,23 @@ class Mage_Catalog_Model_Product_Status extends Mage_Core_Model_Abstract
      */
     public function getFlatColums()
     {
-        return array();
+        $attributeCode = $this->getAttribute()->getAttributeCode();
+        $column = array(
+            'unsigned'  => true,
+            'default'   => null,
+            'extra'     => null
+        );
+
+        if (Mage::helper('core')->useDbCompatibleMode()) {
+            $column['type']     = 'tinyint';
+            $column['is_null']  = true;
+        } else {
+            $column['type']     = Varien_Db_Ddl_Table::TYPE_SMALLINT;
+            $column['nullable'] = true;
+            $column['comment']  = 'Catalog Product Status ' . $attributeCode . ' column';
+        }
+
+        return array($attributeCode => $column);
     }
 
     /**
@@ -258,7 +274,15 @@ class Mage_Catalog_Model_Product_Status extends Mage_Core_Model_Abstract
      */
     public function getFlatIndexes()
     {
-        return array();
+        $indexes = array();
+
+        $index = 'IDX_' . strtoupper($this->getAttribute()->getAttributeCode());
+        $indexes[$index] = array(
+            'type'      => 'index',
+            'fields'    => array($this->getAttribute()->getAttributeCode())
+        );
+
+        return $indexes;
     }
 
     /**
@@ -270,7 +294,8 @@ class Mage_Catalog_Model_Product_Status extends Mage_Core_Model_Abstract
      */
     public function getFlatUpdateSelect($store)
     {
-        return null;
+        return Mage::getResourceSingleton('eav/entity_attribute')
+            ->getFlatUpdateSelect($this->getAttribute(), $store);
     }
 
     /**

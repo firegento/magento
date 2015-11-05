@@ -10,18 +10,18 @@
  * http://opensource.org/licenses/osl-3.0.php
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
+ * to license@magento.com so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Magento to newer
  * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
+ * needs please refer to http://www.magento.com for more information.
  *
  * @category    Mage
  * @package     Mage_Sales
- * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
- * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @copyright  Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
 /**
@@ -43,14 +43,16 @@ class Mage_Sales_Block_Adminhtml_Recurring_Profile_View extends Mage_Adminhtml_B
         ));
 
         $profile = Mage::registry('current_recurring_profile');
-        $comfirmationMessage = Mage::helper('sales')->__('Are you sure you want to do this?');
+        $confirmationMessage = Mage::helper('core')->jsQuoteEscape(
+            Mage::helper('sales')->__('Are you sure you want to do this?')
+        );
 
         // cancel
         if ($profile->canCancel()) {
             $url = $this->getUrl('*/*/updateState', array('profile' => $profile->getId(), 'action' => 'cancel'));
             $this->_addButton('cancel', array(
                 'label'     => Mage::helper('sales')->__('Cancel'),
-                'onclick'   => "confirmSetLocation('{$comfirmationMessage}', '{$url}')",
+                'onclick'   => "confirmSetLocation('{$confirmationMessage}', '{$url}')",
                 'class'     => 'delete',
             ));
         }
@@ -60,7 +62,7 @@ class Mage_Sales_Block_Adminhtml_Recurring_Profile_View extends Mage_Adminhtml_B
             $url = $this->getUrl('*/*/updateState', array('profile' => $profile->getId(), 'action' => 'suspend'));
             $this->_addButton('suspend', array(
                 'label'     => Mage::helper('sales')->__('Suspend'),
-                'onclick'   => "confirmSetLocation('{$comfirmationMessage}', '{$url}')",
+                'onclick'   => "confirmSetLocation('{$confirmationMessage}', '{$url}')",
                 'class'     => 'delete',
             ));
         }
@@ -70,7 +72,7 @@ class Mage_Sales_Block_Adminhtml_Recurring_Profile_View extends Mage_Adminhtml_B
             $url = $this->getUrl('*/*/updateState', array('profile' => $profile->getId(), 'action' => 'activate'));
             $this->_addButton('activate', array(
                 'label'     => Mage::helper('sales')->__('Activate'),
-                'onclick'   => "confirmSetLocation('{$comfirmationMessage}', '{$url}')",
+                'onclick'   => "confirmSetLocation('{$confirmationMessage}', '{$url}')",
                 'class'     => 'add',
             ));
         }
@@ -80,7 +82,7 @@ class Mage_Sales_Block_Adminhtml_Recurring_Profile_View extends Mage_Adminhtml_B
             $url = $this->getUrl('*/*/updateProfile', array('profile' => $profile->getId(),));
             $this->_addButton('update', array(
                 'label'     => Mage::helper('sales')->__('Get Update'),
-                'onclick'   => "confirmSetLocation('{$comfirmationMessage}', '{$url}')",
+                'onclick'   => "confirmSetLocation('{$confirmationMessage}', '{$url}')",
                 'class'     => 'add',
             ));
         }

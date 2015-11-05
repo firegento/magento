@@ -10,18 +10,18 @@
  * http://opensource.org/licenses/osl-3.0.php
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
+ * to license@magento.com so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Magento to newer
  * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
+ * needs please refer to http://www.magento.com for more information.
  *
  * @category    Mage
  * @package     Mage_Checkout
- * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
- * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @copyright  Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
 /**
@@ -137,12 +137,40 @@ class Mage_Checkout_Model_Type_Onepage
             }
         }
 
+        $quoteSave = false;
+        $collectTotals = false;
+
         /**
          * Reset multishipping flag before any manipulations with quote address
          * addAddress method for quote object related on this flag
          */
         if ($this->getQuote()->getIsMultiShipping()) {
             $this->getQuote()->setIsMultiShipping(false);
+            $quoteSave = true;
+        }
+
+        /**
+         *  Reset customer balance
+         */
+        if ($this->getQuote()->getUseCustomerBalance()) {
+            $this->getQuote()->setUseCustomerBalance(false);
+            $quoteSave = true;
+            $collectTotals = true;
+        }
+        /**
+         *  Reset reward points
+         */
+        if ($this->getQuote()->getUseRewardPoints()) {
+            $this->getQuote()->setUseRewardPoints(false);
+            $quoteSave = true;
+            $collectTotals = true;
+        }
+
+        if ($collectTotals) {
+            $this->getQuote()->collectTotals();
+        }
+
+        if ($quoteSave) {
             $this->getQuote()->save();
         }
 
@@ -398,12 +426,12 @@ class Mage_Checkout_Model_Type_Onepage
         if ($quote->getCheckoutMethod() == self::METHOD_REGISTER) {
             // set customer password
             $customer->setPassword($customerRequest->getParam('customer_password'));
-            $customer->setConfirmation($customerRequest->getParam('confirm_password'));
+            $customer->setPasswordConfirmation($customerRequest->getParam('confirm_password'));
         } else {
             // spoof customer password for guest
             $password = $customer->generatePassword();
             $customer->setPassword($password);
-            $customer->setConfirmation($password);
+            $customer->setPasswordConfirmation($password);
             // set NOT LOGGED IN group id explicitly,
             // otherwise copyFieldset('customer_account', 'to_quote') will fill it with default group id value
             $customer->setGroupId(Mage_Customer_Model_Group::NOT_LOGGED_IN_ID);
@@ -698,7 +726,6 @@ class Mage_Checkout_Model_Type_Onepage
 
         Mage::helper('core')->copyFieldset('checkout_onepage_quote', 'to_customer', $quote, $customer);
         $customer->setPassword($customer->decryptPassword($quote->getPasswordHash()));
-        $customer->setPasswordHash($customer->hashPassword($customer->getPassword()));
         $quote->setCustomer($customer)
             ->setCustomerId(true);
     }
@@ -811,7 +838,7 @@ class Mage_Checkout_Model_Type_Onepage
              */
             if (!$redirectUrl && $order->getCanSendNewEmailFlag()) {
                 try {
-                    $order->sendNewOrderEmail();
+                    $order->queueNewOrderEmail();
                 } catch (Exception $e) {
                     Mage::logException($e);
                 }

@@ -10,18 +10,18 @@
  * http://opensource.org/licenses/osl-3.0.php
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
- * to license@magentocommerce.com so we can send you a copy immediately.
+ * to license@magento.com so we can send you a copy immediately.
  *
  * DISCLAIMER
  *
  * Do not edit or add to this file if you wish to upgrade Magento to newer
  * versions in the future. If you wish to customize Magento for your
- * needs please refer to http://www.magentocommerce.com for more information.
+ * needs please refer to http://www.magento.com for more information.
  *
  * @category    Mage
  * @package     Mage_XmlConnect
- * @copyright   Copyright (c) 2014 Magento Inc. (http://www.magentocommerce.com)
- * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @copyright  Copyright (c) 2006-2015 X.commerce, Inc. (http://www.magento.com)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
 /**
@@ -34,27 +34,27 @@
 class Mage_XmlConnect_Block_Configuration extends Mage_Core_Block_Abstract
 {
     /**
-     * Current application model
+     * XmlConnect application model
      *
      * @var Mage_XmlConnect_Model_Application
      */
-    protected $_app;
+    protected $_connectApp;
 
     /**
-     * Init current application
+     * Retrieve initialized instance of XmlConnect application model
      *
-     * @return Mage_XmlConnect_Block_Configuration
+     * @return Mage_XmlConnect_Model_Application
      */
-    protected function _beforeToHtml()
+    protected function _getConnectApp()
     {
-        $app = Mage::helper('xmlconnect')->getApplication();
-        if ($app) {
-            $this->_app = $app;
-        } else {
-            $this->_app = Mage::getModel('xmlconnect/application');
-            $this->_app->loadDefaultConfiguration();
+        if (!$this->_connectApp) {
+            $this->_connectApp = Mage::helper('xmlconnect')->getApplication();
+            if (!$this->_connectApp) {
+                $this->_connectApp = Mage::getModel('xmlconnect/application');
+                $this->_connectApp->loadDefaultConfiguration();
+            }
         }
-        return $this;
+        return $this->_connectApp;
     }
 
     /**
@@ -115,7 +115,8 @@ class Mage_XmlConnect_Block_Configuration extends Mage_Core_Block_Abstract
     {
         /** @var $xml Mage_XmlConnect_Model_Simplexml_Element */
         $xml = Mage::getModel('xmlconnect/simplexml_element', '<configuration></configuration>');
-        $this->_buildRecursive($xml, Mage::helper('xmlconnect')->excludeXmlConfigKeys($this->_app->getRenderConf()))
+        $conf = $this->_getConnectApp()->getRenderConf();
+        $this->_buildRecursive($xml, Mage::helper('xmlconnect')->excludeXmlConfigKeys($conf))
             ->_addLocalization($xml);
         return $xml->asNiceXml();
     }
