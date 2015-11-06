@@ -16,10 +16,6 @@ Your main root project `composer.json` file can look like this:
 ```json
 {
     "repositories": {
-        "magento": {
-          "type":"git", 
-          "url":"https://github.com/firegento/magento"
-        },
         "firegento": {
           "type": "composer",
           "url": "http://packages.firegento.com"
