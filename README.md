@@ -11,35 +11,10 @@ Firegento Magento Community Magento-1.x Mirror Github Repository with Patches.
 
 If you do not know what Composer is, please first read [this](https://getcomposer.org/doc/00-intro.md).
 
-Your main root project `composer.json` file can look like this:
+To generate `composer.json` and install magento for the first time run:
 
-```json
-{
-    "repositories": {
-        "firegento": {
-          "type": "composer",
-          "url": "http://packages.firegento.com"
-        }
-    },
-    "require": {
-      "magento-hackathon/magento-composer-installer": "~3.0",
-      "aydin-hassan/magento-core-composer-installer": "~1.2",
-      "firegento/magento": "~1.9.2"
-    },
-    "extra": {
-      "magento-root-dir": "src",
-      "auto-append-gitignore": true,
-      "magento-deploystrategy": "copy",
-      "magento-force": true
-    }
-}
 ```
-
-To install magento:
-
-* create webroot `src`
-* run `composer install`
-
-To update magento:
-
-* run `composer update`
+composer require magento-hackathon/magento-composer-installer ~3.0
+composer require aydin-hassan/magento-core-composer-installer ~1.2
+composer require firegento/magento ~1.9.2.2
+```
