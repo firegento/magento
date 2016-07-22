@@ -86,3 +86,7 @@ patching file lib/Unserialize/Reader/Str.php
 patching file lib/Varien/Data/Collection/Db.php
 
 
+-e 2016-07-22 15:29:10 UTC | SUPEE-4755 | EE_1.13.1.0 | v1 | c76fcfcd842aeb74fe034b5c4f100a4e17d5bc60 | Fri Jan 16 13:29:07 2015 +0200 | v1.13.1.0..HEAD
+patching file app/code/core/Mage/Core/Model/Config.php
+
+
