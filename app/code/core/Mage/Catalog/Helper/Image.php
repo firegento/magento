@@ -33,7 +33,6 @@ class Mage_Catalog_Helper_Image extends Mage_Core_Helper_Abstract
 {
     const XML_NODE_PRODUCT_BASE_IMAGE_WIDTH = 'catalog/product_image/base_width';
     const XML_NODE_PRODUCT_SMALL_IMAGE_WIDTH = 'catalog/product_image/small_width';
-    const XML_NODE_PRODUCT_MAX_DIMENSION = 'catalog/product_image/max_dimension';
 
     /**
      * Current model
@@ -635,14 +634,8 @@ class Mage_Catalog_Helper_Image extends Mage_Core_Helper_Abstract
      * @throws Mage_Core_Exception
      */
     public function validateUploadFile($filePath) {
-        $maxDimension = Mage::getStoreConfig(self::XML_NODE_PRODUCT_MAX_DIMENSION);
-        $imageInfo = getimagesize($filePath);
-        if (!$imageInfo) {
+        if (!getimagesize($filePath)) {
             Mage::throwException($this->__('Disallowed file type.'));
-        }
-
-        if ($imageInfo[0] > $maxDimension || $imageInfo[1] > $maxDimension) {
-            Mage::throwException($this->__('Disalollowed file format.'));
         }
 
         $_processor = new Varien_Image($filePath);

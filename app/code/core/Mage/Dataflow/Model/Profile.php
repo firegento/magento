@@ -64,14 +64,10 @@ class Mage_Dataflow_Model_Profile extends Mage_Core_Model_Abstract
 
     protected function _afterLoad()
     {
-        $guiData = '';
         if (is_string($this->getGuiData())) {
-            try {
-                $guiData = Mage::helper('core/unserializeArray')
-                    ->unserialize($this->getGuiData());
-            } catch (Exception $e) {
-                Mage::logException($e);
-            }
+            $guiData = unserialize($this->getGuiData());
+        } else {
+            $guiData = '';
         }
         $this->setGuiData($guiData);
 
@@ -131,13 +127,7 @@ class Mage_Dataflow_Model_Profile extends Mage_Core_Model_Abstract
     protected function _afterSave()
     {
         if (is_string($this->getGuiData())) {
-            try {
-                $guiData = Mage::helper('core/unserializeArray')
-                    ->unserialize($this->getGuiData());
-                $this->setGuiData($guiData);
-            } catch (Exception $e) {
-                Mage::logException($e);
-            }
+            $this->setGuiData(unserialize($this->getGuiData()));
         }
 
         $profileHistory = Mage::getModel('dataflow/profile_history');
