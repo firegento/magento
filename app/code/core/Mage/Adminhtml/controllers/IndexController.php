@@ -391,7 +391,7 @@ class Mage_Adminhtml_IndexController extends Mage_Adminhtml_Controller_Action
         }
 
         $userToken = $user->getRpToken();
-        if (!hash_equals($userToken, $resetPasswordLinkToken) || $user->isResetPasswordLinkTokenExpired()) {
+        if (strcmp($userToken, $resetPasswordLinkToken) != 0 || $user->isResetPasswordLinkTokenExpired()) {
             throw Mage::exception('Mage_Core', Mage::helper('adminhtml')->__('Your password reset link has expired.'));
         }
     }
