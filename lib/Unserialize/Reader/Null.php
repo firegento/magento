@@ -19,44 +19,46 @@
  * needs please refer to http://www.magento.com for more information.
  *
  * @category    Unserialize
- * @package     Unserialize_Parser
+ * @package     Unserialize_Reader_Null
  * @copyright  Copyright (c) 2006-2016 X.commerce, Inc. and affiliates (http://www.magento.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
 /**
- * Class Unserialize_Parser
+ * Class Unserialize_Reader_Null
  */
-class Unserialize_Parser
+class Unserialize_Reader_Null
 {
-    const TYPE_STRING = 's';
-    const TYPE_INT = 'i';
-    const TYPE_DOUBLE = 'd';
-    const TYPE_ARRAY = 'a';
-    const TYPE_BOOL = 'b';
-    const TYPE_NULL = 'N';
-
-    const SYMBOL_QUOTE = '"';
-    const SYMBOL_SEMICOLON = ';';
-    const SYMBOL_COLON = ':';
+    /**
+     * @var int
+     */
+    protected $_status;
 
     /**
-     * @param $str
-     * @return array|null
-     * @throws Exception
+     * @var string
      */
-    public function unserialize($str)
+    protected $_value;
+
+    const NULL_VALUE = 'null';
+
+    const READING_VALUE = 1;
+
+    /**
+     * @param string $char
+     * @param string $prevChar
+     * @return string|null
+     */
+    public function read($char, $prevChar)
     {
-        $reader = new Unserialize_Reader_Arr();
-        $prevChar = null;
-        for ($i = 0; $i < strlen($str); $i++) {
-            $char = $str[$i];
-            $arr = $reader->read($char, $prevChar);
-            if (!is_null($arr)) {
-                return $arr;
-            }
-            $prevChar = $char;
+        if ($prevChar == Unserialize_Parser::SYMBOL_SEMICOLON) {
+            $this->_value = self::NULL_VALUE;
+            $this->_status = self::READING_VALUE;
+            return null;
         }
-        throw new Exception('Error during unserialization');
+
+        if ($this->_status == self::READING_VALUE && $char == Unserialize_Parser::SYMBOL_SEMICOLON) {
+            return $this->_value;
+        }
+        return null;
     }
 }
