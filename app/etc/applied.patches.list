@@ -253,3 +253,18 @@ patching file app/code/core/Mage/Sales/Model/Quote/Item.php
 patching file lib/Varien/File/Uploader.php
 
 
+-e -n 2016-10-27 15:07:04 UTC | SUPEE-3941 | EE_1.14.0.1 | v1 | d35110621d80be22922611e2b0a502da054a95f0 | Tue Jul 15 11:57:57 2014 +0300 | v1.14.0.1..HEAD
+patching file downloader/Maged/Model/Connect.php
+Hunk #1 succeeded at 489 (offset 3 lines).
+patching file downloader/lib/Mage/Connect/Backup.php
+patching file downloader/lib/Mage/Connect/Command.php
+patching file downloader/lib/Mage/Connect/Command/Install.php
+patching file downloader/lib/Mage/Connect/Packager.php
+patching file downloader/lib/Mage/Connect/Rest.php
+patching file downloader/lib/Mage/Connect/Singleconfig.php
+patching file downloader/lib/Mage/Connect/Validator.php
+patching file downloader/lib/Mage/HTTP/Client/Curl.php
+patching file downloader/template/settings.phtml
+Hunk #1 succeeded at 64 (offset 1 line).
+
+

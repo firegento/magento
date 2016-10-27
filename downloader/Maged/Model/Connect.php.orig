@@ -489,9 +489,6 @@ class Maged_Model_Connect extends Maged_Model
      */
     public function checkExtensionKey($id, &$match)
     {
-        if (preg_match('#^(.+)\/(.+)-([\.\d]+)$#', $id, $match)) {
-            return $match;
-        }
-        return preg_match('#^(.+)\/(.+)$#', $id, $match);
+        return preg_match('#^([^ ]+)\/([^-]+)(-.+)?$#', $id, $match);
     }
 }
