@@ -105,4 +105,13 @@ class Mage_Core_Controller_Response_Http extends Zend_Controller_Response_Http
 
         return parent::setRedirect(self::$_transportObject->getUrl(), self::$_transportObject->getCode());
     }
+
+    /**
+     * Method send already collected headers and exit from script
+     */
+    public function sendHeadersAndExit()
+    {
+        $this->sendHeaders();
+        exit;
+    }
 }
