@@ -32,3 +32,10 @@ patching file lib/PEAR/PEAR/PEAR5.php
 patching file lib/Varien/Io/File.php
 
 
+-e -n 2016-10-27 14:47:43 UTC | SUPEE-6237 | EE_1.14.2.0 | v1 | 8b216c42e2e5d2cb5d8e500fcb6690abede9df52 | Fri Jun 12 13:39:59 2015 +0300 | v1.14.2.0..HEAD
+patching file app/code/core/Mage/Usa/Model/Shipping/Carrier/Abstract.php
+patching file app/code/core/Mage/Usa/Model/Shipping/Carrier/Usps.php
+Hunk #1 succeeded at 388 (offset -4 lines).
+Hunk #2 succeeded at 476 (offset -4 lines).
+
+
