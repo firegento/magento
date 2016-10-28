@@ -100,8 +100,11 @@ class Maged_Model_Connect extends Maged_Model
     {
         $match = array();
         if (!$this->checkExtensionKey($id, $match)) {
-            echo('Invalid package identifier provided: '.$id);
-            exit;
+            $errorMessage[] = sprintf('Invalid package identifier provided: %s', $id);
+            $packages = array(
+                'errors' => array('error'=> $errorMessage)
+            );
+            return $packages;
         }
 
         $channel = $match[1];
@@ -486,6 +489,9 @@ class Maged_Model_Connect extends Maged_Model
      */
     public function checkExtensionKey($id, &$match)
     {
-        return preg_match('#^([^ ]+)\/([^-]+)(-.+)?$#', $id, $match);
+        if (preg_match('#^(.+)\/(.+)-([\.\d]+)$#', $id, $match)) {
+            return $match;
+        }
+        return preg_match('#^(.+)\/(.+)$#', $id, $match);
     }
 }

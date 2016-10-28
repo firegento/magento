@@ -50,6 +50,7 @@ function changeDeploymentType (element)
 <div class="settings-page">
     <h2 class="page-head">Settings</h2>
     <form action="<?php echo $this->url('settingsPost') ?>" method="post">
+        <input name="form_key" type="hidden" value="<?php echo $this->getFormKey() ?>" />
         <fieldset>
             <p>Magento Extensions are available in three different versions.</p>
             <ul class="disc">
@@ -63,8 +64,8 @@ function changeDeploymentType (element)
                     <td class="label">Magento Connect Channel Protocol:</td>
                     <td class="value">
                         <select id="protocol" name="protocol">
+                            <option value="https" <?php if ($this->get('protocol')=='https'):?>selected="selected"<?php endif ?>>Https</option>
                             <option value="http" <?php if ($this->get('protocol')=='http'):?>selected="selected"<?php endif ?>>Http</option>
-                            <option value="ftp" <?php if ($this->get('protocol')=='ftp'):?>selected="selected"<?php endif ?>>Ftp</option>
                         </select>
                     </td>
                 </tr>

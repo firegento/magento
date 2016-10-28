@@ -33,6 +33,9 @@
  */
 class Mage_ImportExport_Model_Export_Adapter_Csv extends Mage_ImportExport_Model_Export_Adapter_Abstract
 {
+    /** config string for escaping export */
+    const CONFIG_ESCAPING_FLAG = 'system/export_csv/escaping';
+
     /**
      * Field delimiter.
      *
@@ -109,13 +112,22 @@ class Mage_ImportExport_Model_Export_Adapter_Csv extends Mage_ImportExport_Model
         if (null === $this->_headerCols) {
             $this->setHeaderCols(array_keys($rowData));
         }
+
+        /**
+         * Security enchancement for CSV data processing by Excel-like applications.
+         * @see https://bugzilla.mozilla.org/show_bug.cgi?id=1054702
+         */
+        $data = array_merge($this->_headerCols, array_intersect_key($rowData, $this->_headerCols));
+        $data = Mage::helper("core")->getEscapedCSVData($data);
+
         fputcsv(
             $this->_fileHandler,
-            array_merge($this->_headerCols, array_intersect_key($rowData, $this->_headerCols)),
+            $data,
             $this->_delimiter,
             $this->_enclosure
         );
 
         return $this;
     }
+
 }
