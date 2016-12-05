@@ -388,7 +388,10 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
             $package->addChild('Height', $height);
             $package->addChild('Girth', $girth);
 
-
+            if ($this->_isCanada($r->getDestCountryId())) {
+                //only 5 chars available
+                $package->addChild('OriginZip', substr($r->getOrigPostal(), 0, 5));
+            }
             $api = 'IntlRateV2';
         }
         $request = $xml->asXML();
@@ -473,6 +476,9 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
                      else {
                         if (is_object($xml->Package) && is_object($xml->Package->Service)) {
                             foreach ($xml->Package->Service as $service) {
+                                if ($service->ServiceErrors->count()) {
+                                    continue;
+                                }
                                 $serviceName = $this->_filterServiceName((string)$service->SvcDescription);
                                 $serviceCode = 'INT_' . (string)$service->attributes()->ID;
                                 $serviceCodeToActualNameMap[$serviceCode] = $serviceName;
@@ -569,8 +575,6 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
                  '49'     => Mage::helper('usa')->__('Priority Mail Regional Rate Box B'),
                  '50'     => Mage::helper('usa')->__('Priority Mail Regional Rate Box B Hold For Pickup'),
                  '53'     => Mage::helper('usa')->__('First-Class Package Service Hold For Pickup'),
-                 '55'     => Mage::helper('usa')->__('Priority Mail Express Flat Rate Boxes'),
-                 '56'     => Mage::helper('usa')->__('Priority Mail Express Flat Rate Boxes Hold For Pickup'),
                  '57'     => Mage::helper('usa')->__('Priority Mail Express Sunday/Holiday Delivery Flat Rate Boxes'),
                  '58'     => Mage::helper('usa')->__('Priority Mail Regional Rate Box C'),
                  '59'     => Mage::helper('usa')->__('Priority Mail Regional Rate Box C Hold For Pickup'),
@@ -602,7 +606,6 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
                  'INT_23' => Mage::helper('usa')->__('Priority Mail International Padded Flat Rate Envelope'),
                  'INT_24' => Mage::helper('usa')->__('Priority Mail International DVD Flat Rate priced box'),
                  'INT_25' => Mage::helper('usa')->__('Priority Mail International Large Video Flat Rate priced box'),
-                 'INT_26' => Mage::helper('usa')->__('Priority Mail Express International Flat Rate Boxes'),
                  'INT_27' => Mage::helper('usa')->__('Priority Mail Express International Padded Flat Rate Envelope'),
              ),
 
@@ -614,7 +617,7 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
                  '1'      => 'Priority',
                  '2'      => 'Priority Express',
                  '3'      => 'Priority Express',
-                 '4'      => 'Standard Post',
+                 '4'      => 'Retail Ground',
                  '6'      => 'Media',
                  '7'      => 'Library',
                  '13'     => 'Priority Express',
@@ -649,8 +652,6 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
                  '49'     => 'Priority',
                  '50'     => 'Priority',
                  '53'     => 'First Class',
-                 '55'     => 'Priority Express',
-                 '56'     => 'Priority Express',
                  '57'     => 'Priority Express',
                  '58'     => 'Priority',
                  '59'     => 'Priority',
@@ -682,7 +683,6 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
                  'INT_23' => 'Priority',
                  'INT_24' => 'Priority',
                  'INT_25' => 'Priority',
-                 'INT_26' => 'Priority Express',
                  'INT_27' => 'Priority Express',
              ),
 
@@ -732,7 +732,7 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
                                 'First-Class Package Service Hold For Pickup',
                                 'Priority Mail Express Flat Rate Boxes',
                                 'Priority Mail Express Flat Rate Boxes Hold For Pickup',
-                                'Standard Post',
+                                'Retail Ground',
                                 'Media Mail',
                                 'First-Class Mail Large Envelope',
                                 'Priority Mail Express Sunday/Holiday Delivery',
@@ -771,8 +771,6 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
                                 'Priority Mail International Large Flat Rate Box',
                                 'Priority Mail International Medium Flat Rate Box',
                                 'Priority Mail International Small Flat Rate Box',
-                                'Priority Mail Express Sunday/Holiday Delivery Flat Rate Boxes',
-
                             )
                         ),
                         'from_us' => array(
@@ -824,7 +822,7 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
                             'method' => array(
                                 'Priority Mail Express',
                                 'Priority Mail',
-                                'Standard Post',
+                                'Retail Ground',
                                 'Media Mail',
                                 'Library Mail',
                                 'First-Class Package Service'
@@ -847,7 +845,7 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
                             'method' => array(
                                 'Priority Mail Express',
                                 'Priority Mail',
-                                'Standard Post',
+                                'Retail Ground',
                                 'Media Mail',
                                 'Library Mail',
                                 'First-Class Package Service'
@@ -1413,7 +1411,8 @@ class Mage_Usa_Model_Shipping_Carrier_Usps
                 break;
             case 'STANDARD':
             case 'Standard Post':
-                $serviceType = 'Standard Post';
+            case 'Retail Ground':
+                $serviceType = 'Retail Ground';
                 break;
             case 'MEDIA':
             case 'Media':

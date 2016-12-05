@@ -269,7 +269,7 @@ class Mage_Catalog_Model_Resource_Layer_Filter_Price extends Mage_Core_Model_Res
             'range' => $rangeExpr,
             'count' => $countExpr
         ));
-        $select->group($rangeExpr)->order("$rangeExpr ASC");
+        $select->group('range')->order('range ' . Varien_Data_Collection::SORT_ORDER_ASC);
 
         return $this->_getReadAdapter()->fetchPairs($select);
     }
