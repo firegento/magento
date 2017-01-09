@@ -108,7 +108,7 @@ class Mage_Catalog_Model_Product_Api_V2 extends Mage_Catalog_Model_Product_Api
      */
     public function create($type, $set, $sku, $productData, $store = null)
     {
-        if (!$type || !$set || !$sku || !is_object($productData)) {
+        if (!$type || !$set || !$sku) {
             $this->_fault('data_invalid');
         }
 
@@ -243,9 +243,6 @@ class Mage_Catalog_Model_Product_Api_V2 extends Mage_Catalog_Model_Product_Api
      */
     protected function _prepareDataForSave ($product, $productData)
     {
-        if (!is_object($productData)) {
-            $this->_fault('data_invalid');
-        }
         if (property_exists($productData, 'website_ids') && is_array($productData->website_ids)) {
             $product->setWebsiteIds($productData->website_ids);
         }

@@ -32,7 +32,7 @@
  * @author      Magento Core Team <core@magentocommerce.com>
  */
 class Mage_Downloadable_Block_Adminhtml_Catalog_Product_Edit_Tab_Downloadable_Samples
-    extends Mage_Uploader_Block_Single
+    extends Mage_Adminhtml_Block_Widget
 {
     /**
      * Class constructor
@@ -148,7 +148,6 @@ class Mage_Downloadable_Block_Adminhtml_Catalog_Product_Edit_Tab_Downloadable_Sa
      */
     protected function _prepareLayout()
     {
-        parent::_prepareLayout();
         $this->setChild(
             'upload_button',
             $this->getLayout()->createBlock('adminhtml/widget_button')
@@ -159,11 +158,6 @@ class Mage_Downloadable_Block_Adminhtml_Catalog_Product_Edit_Tab_Downloadable_Sa
                     'onclick' => 'Downloadable.massUploadByType(\'samples\')'
                 ))
         );
-
-        $this->_addElementIdsMapping(array(
-            'container' => $this->getHtmlId() . '-new',
-            'delete'    => $this->getHtmlId() . '-delete'
-        ));
     }
 
     /**
@@ -177,59 +171,40 @@ class Mage_Downloadable_Block_Adminhtml_Catalog_Product_Edit_Tab_Downloadable_Sa
     }
 
     /**
-     * Retrieve config json
+     * Retrive config json
      *
      * @return string
      */
     public function getConfigJson()
     {
-        $this->getUploaderConfig()
-            ->setFileParameterName('samples')
-            ->setTarget(
-                Mage::getModel('adminhtml/url')
-                    ->addSessionParam()
-                    ->getUrl('*/downloadable_file/upload', array('type' => 'samples', '_secure' => true))
-            );
-        $this->getMiscConfig()
-            ->setReplaceBrowseWithRemove(true)
-        ;
-        return Mage::helper('core')->jsonEncode(parent::getJsonConfig());
+        $this->getConfig()->setUrl(Mage::getModel('adminhtml/url')
+            ->addSessionParam()
+            ->getUrl('*/downloadable_file/upload', array('type' => 'samples', '_secure' => true)));
+        $this->getConfig()->setParams(array('form_key' => $this->getFormKey()));
+        $this->getConfig()->setFileField('samples');
+        $this->getConfig()->setFilters(array(
+            'all'    => array(
+                'label' => Mage::helper('adminhtml')->__('All Files'),
+                'files' => array('*.*')
+            )
+        ));
+        $this->getConfig()->setReplaceBrowseWithRemove(true);
+        $this->getConfig()->setWidth('32');
+        $this->getConfig()->setHideUploadButton(true);
+        return Mage::helper('core')->jsonEncode($this->getConfig()->getData());
     }
 
     /**
-     * @return string
-     */
-    public function getBrowseButtonHtml()
-    {
-        return $this->getChild('browse_button')
-            // Workaround for IE9
-            ->setBeforeHtml('<div style="display:inline-block; " id="downloadable_sample_{{id}}_file-browse">')
-            ->setAfterHtml('</div>')
-            ->setId('downloadable_sample_{{id}}_file-browse_button')
-            ->toHtml();
-    }
-
-
-    /**
-     * @return string
-     */
-    public function getDeleteButtonHtml()
-    {
-        return $this->getChild('delete_button')
-            ->setLabel('')
-            ->setId('downloadable_sample_{{id}}_file-delete')
-            ->setStyle('display:none; width:31px;')
-            ->toHtml();
-    }
-
-    /**
-     * Retrieve config object
+     * Retrive config object
      *
-     * @deprecated
-     * @return $this
+     * @return Varien_Config
      */
     public function getConfig()
     {
-        return $this;
+        if(is_null($this->_config)) {
+            $this->_config = new Varien_Object();
+        }
+
+        return $this->_config;
     }
 }

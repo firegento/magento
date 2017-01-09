@@ -14,7 +14,7 @@
  *
  * @category   Zend
  * @package    Zend_Controller
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -28,12 +28,6 @@
  */
 #require_once 'Zend/XmlRpc/Fault.php';
 
-/** @see Zend_Xml_Security */
-#require_once 'Zend/Xml/Security.php';
-
-/** @see Zend_Xml_Exception */
-#require_once 'Zend/Xml/Exception.php';
-
 /**
  * XmlRpc Response
  *
@@ -41,9 +35,9 @@
  *
  * @category Zend
  * @package  Zend_XmlRpc
- * @copyright  Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version $Id$
+ * @version $Id: Response.php 21359 2010-03-07 00:54:02Z lars $
  */
 class Zend_XmlRpc_Response
 {
@@ -182,9 +176,15 @@ class Zend_XmlRpc_Response
             return false;
         }
 
+        $loadEntities = libxml_disable_entity_loader(true);
+        $useInternalXmlErrors = libxml_use_internal_errors(true);
         try {
-            $xml = Zend_Xml_Security::scan($response);
-        } catch (Zend_Xml_Exception $e) {
+            $xml = new SimpleXMLElement($response);
+            libxml_disable_entity_loader($loadEntities);
+            libxml_use_internal_errors($useInternalXmlErrors);
+        } catch (Exception $e) {
+            libxml_disable_entity_loader($loadEntities);
+            libxml_use_internal_errors($useInternalXmlErrors);
             // Not valid XML
             $this->_fault = new Zend_XmlRpc_Fault(651);
             $this->_fault->setEncoding($this->getEncoding());
@@ -208,7 +208,6 @@ class Zend_XmlRpc_Response
 
         try {
             if (!isset($xml->params) || !isset($xml->params->param) || !isset($xml->params->param->value)) {
-                #require_once 'Zend/XmlRpc/Value/Exception.php';
                 throw new Zend_XmlRpc_Value_Exception('Missing XML-RPC value in XML');
             }
             $valueXml = $xml->params->param->value->asXML();
