@@ -837,12 +837,7 @@ class Mage_Usa_Model_Shipping_Carrier_Dhl_International
     {
         $client = new Varien_Http_Client();
         $client->setUri((string)$this->getConfigData('gateway_url'));
-        $client->setConfig(array(
-            'maxredirects' => 0,
-            'timeout' => 30,
-            'verifypeer' => $this->getConfigFlag('verify_peer'),
-            'verifyhost' => 2,
-        ));
+        $client->setConfig(array('maxredirects' => 0, 'timeout' => 30));
         $client->setRawData(utf8_encode($request));
         return $client->request(Varien_Http_Client::POST)->getBody();
     }
@@ -1416,12 +1411,7 @@ class Mage_Usa_Model_Shipping_Carrier_Dhl_International
             try {
                 $client = new Varien_Http_Client();
                 $client->setUri((string)$this->getConfigData('gateway_url'));
-                $client->setConfig(array(
-                    'maxredirects' => 0,
-                    'timeout' => 30,
-                    'verifypeer' => $this->getConfigFlag('verify_peer'),
-                    'verifyhost' => 2,
-                ));
+                $client->setConfig(array('maxredirects' => 0, 'timeout' => 30));
                 $client->setRawData($request);
                 $responseBody = $client->request(Varien_Http_Client::POST)->getBody();
                 $debugData['result'] = $responseBody;
@@ -1613,12 +1603,7 @@ class Mage_Usa_Model_Shipping_Carrier_Dhl_International
             try {
                 $client = new Varien_Http_Client();
                 $client->setUri((string)$this->getConfigData('gateway_url'));
-                $client->setConfig(array(
-                    'maxredirects' => 0,
-                    'timeout' => 30,
-                    'verifypeer' => $this->getConfigFlag('verify_peer'),
-                    'verifyhost' => 2,
-                ));
+                $client->setConfig(array('maxredirects' => 0, 'timeout' => 30));
                 $client->setRawData($request);
                 $responseBody = $client->request(Varien_Http_Client::POST)->getBody();
                 $debugData['result'] = $responseBody;

@@ -291,19 +291,11 @@ class Mage_Core_Controller_Request_Http extends Zend_Controller_Request_Http
         if (!isset($_SERVER['HTTP_HOST'])) {
             return false;
         }
-        $host = $_SERVER['HTTP_HOST'];
         if ($trimPort) {
-            $hostParts = explode(':', $_SERVER['HTTP_HOST']);
-            $host =  $hostParts[0];
+            $host = explode(':', $_SERVER['HTTP_HOST']);
+            return $host[0];
         }
-
-        if (strpos($host, ',') !== false || strpos($host, ';') !== false) {
-            $response = new Zend_Controller_Response_Http();
-            $response->setHttpResponseCode(400)->sendHeaders();
-            exit();
-        }
-
-        return $host;
+        return $_SERVER['HTTP_HOST'];
     }
 
     /**

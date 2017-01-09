@@ -31,7 +31,7 @@
  * @package     Mage_Xmlconnect
  * @author      Magento Core Team <core@magentocommerce.com>
  */
-class Mage_XmlConnect_Block_Adminhtml_Mobile_Edit_Tab_Design_Images extends Mage_Uploader_Block_Single
+class Mage_XmlConnect_Block_Adminhtml_Mobile_Edit_Tab_Design_Images extends Mage_Adminhtml_Block_Template
 {
     /**
      * Init block, set preview template
@@ -116,56 +116,42 @@ class Mage_XmlConnect_Block_Adminhtml_Mobile_Edit_Tab_Design_Images extends Mage
             'application_id' => $this->getApplicationId());
 
         if (isset($image['image_id'])) {
-            $this->getMiscConfig()->setData('file_save',
-                Mage::getModel('xmlconnect/images')->getImageUrl($image['image_file']))
-                    ->setImageId($image['image_id']
-            )->setData('thumbnail',
-                Mage::getModel('xmlconnect/images')->getCustomSizeImageUrl(
+            $this->getConfig()->setFileSave(Mage::getModel('xmlconnect/images')->getImageUrl($image['image_file']))
+                ->setImageId($image['image_id']);
+
+            $this->getConfig()->setThumbnail(Mage::getModel('xmlconnect/images')->getCustomSizeImageUrl(
                 $image['image_file'],
                 Mage_XmlConnect_Helper_Data::THUMBNAIL_IMAGE_WIDTH,
                 Mage_XmlConnect_Helper_Data::THUMBNAIL_IMAGE_HEIGHT
-            ))->setData('image_id', $image['image_id']);
+            ))->setImageId($image['image_id']);
 
             $imageActionData = Mage::helper('xmlconnect')->getApplication()->getImageActionModel()
                 ->getImageActionData($image['image_id']);
             if ($imageActionData) {
-                $this->getMiscConfig()->setData('image_action_data', $imageActionData);
+                $this->getConfig()->setImageActionData($imageActionData);
             }
         }
 
-        $this->getUploaderConfig()
-            ->setFileParameterName($image['image_type'])
-            ->setTarget(
-                Mage::getModel('adminhtml/url')->addSessionParam()->getUrl('*/*/uploadimages', $params)
-            );
+        if (isset($image['show_uploader'])) {
+            $this->getConfig()->setShowUploader($image['show_uploader']);
+        }
 
-        $this->getButtonConfig()
-            ->setAttributes(
-                array('accept' => $this->getButtonConfig()->getMimeTypesByExtensions('gif, jpg, jpeg, png'))
-            );
-        $this->getMiscConfig()
-            ->setReplaceBrowseWithRemove(true)
-            ->setData('image_count', $this->getImageCount())
-        ;
+        $this->getConfig()->setUrl(
+            Mage::getModel('adminhtml/url')->addSessionParam()->getUrl('*/*/uploadimages', $params)
+        );
+        $this->getConfig()->setParams(array('form_key' => $this->getFormKey()));
+        $this->getConfig()->setFileField($image['image_type']);
+        $this->getConfig()->setFilters(array(
+            'images' => array(
+                'label' => Mage::helper('adminhtml')->__('Images (.gif, .jpg, .png)'),
+                'files' => array('*.gif', '*.jpg','*.jpeg', '*.png')
+        )));
+        $this->getConfig()->setReplaceBrowseWithRemove(true);
+        $this->getConfig()->setWidth('32');
+        $this->getConfig()->setHideUploadButton(true);
+        $this->getConfig()->setImageCount($this->getImageCount());
 
-        return parent::getJsonConfig();
-    }
-
-    /**
-     * Prepare layout, change button and set front-end element ids mapping
-     *
-     * @return $this
-     */
-    protected function _prepareLayout()
-    {
-        parent::_prepareLayout();
-
-        $this->_addElementIdsMapping(array(
-            'container'     => $this->getHtmlId() . '-new',
-            'idToReplace'   => $this->getHtmlId(),
-        ));
-
-        return $this;
+        return $this->getConfig()->getData();
     }
 
     /**
@@ -182,12 +168,15 @@ class Mage_XmlConnect_Block_Adminhtml_Mobile_Edit_Tab_Design_Images extends Mage
     /**
      * Retrieve image config object
      *
-     * @deprecated
-     * @return $this
+     * @return Varien_Object
      */
     public function getConfig()
     {
-        return $this;
+        if(is_null($this->_config)) {
+            $this->_config = new Varien_Object();
+        }
+
+        return $this->_config;
     }
 
     /**
@@ -197,13 +186,7 @@ class Mage_XmlConnect_Block_Adminhtml_Mobile_Edit_Tab_Design_Images extends Mage
      */
     public function clearConfig()
     {
-        $this->getMiscConfig()
-            ->unsetData('image_id')
-            ->unsetData('file_save')
-            ->unsetData('thumbnail')
-            ->unsetData('image_count')
-        ;
-        $this->getUploaderConfig()->unsetFileParameterName();
+        $this->_config = null;
         return $this;
     }
 }
