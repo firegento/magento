@@ -1,0 +1,8 @@
+2018-04-10 20:23:55 UTC | SUPEE-10570_CE_v1.9.3.8 | CE_1.9.3.8 | v1 | 9d4a4788d8c8380da1937c223301b4f70e643b57 | Fri Mar 16 13:10:50 2018 +0200 | ce-1.9.3.8-dev
+patching file app/code/core/Mage/Adminhtml/controllers/CustomerController.php
+patching file app/code/core/Mage/Core/Model/Session/Abstract/Varien.php
+patching file app/code/core/Mage/Customer/Helper/Data.php
+patching file app/code/core/Mage/Customer/Model/Resource/Customer.php
+patching file app/code/core/Mage/Customer/controllers/AccountController.php
+
+
