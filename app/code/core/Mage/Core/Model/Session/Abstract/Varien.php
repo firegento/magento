@@ -33,7 +33,6 @@ class Mage_Core_Model_Session_Abstract_Varien extends Varien_Object
     const VALIDATOR_HTTP_VIA_KEY                = 'http_via';
     const VALIDATOR_REMOTE_ADDR_KEY             = 'remote_addr';
     const VALIDATOR_SESSION_EXPIRE_TIMESTAMP    = 'session_expire_timestamp';
-    const VALIDATOR_PASSWORD_CREATE_TIMESTAMP   = 'password_create_timestamp';
     const SECURE_COOKIE_CHECK_KEY               = '_secure_cookie_check';
 
     /**
@@ -395,16 +394,6 @@ class Mage_Core_Model_Session_Abstract_Varien extends Varien_Object
     }
 
     /**
-     * Use password creation timestamp in validator key
-     *
-     * @return bool
-     */
-    public function useValidateSessionPasswordTimestamp()
-    {
-        return true;
-    }
-
-    /**
      * Retrieve skip User Agent validation strings (Flash etc)
      *
      * @return array
@@ -481,14 +470,6 @@ class Mage_Core_Model_Session_Abstract_Varien extends Varien_Object
             $this->_data[self::VALIDATOR_KEY][self::VALIDATOR_SESSION_EXPIRE_TIMESTAMP]
                 = $validatorData[self::VALIDATOR_SESSION_EXPIRE_TIMESTAMP];
         }
-        if ($this->useValidateSessionPasswordTimestamp()
-            && isset($validatorData[self::VALIDATOR_PASSWORD_CREATE_TIMESTAMP])
-            && isset($sessionData[self::VALIDATOR_SESSION_EXPIRE_TIMESTAMP])
-            && $validatorData[self::VALIDATOR_PASSWORD_CREATE_TIMESTAMP]
-            > $sessionData[self::VALIDATOR_SESSION_EXPIRE_TIMESTAMP] - $this->getCookie()->getLifetime()
-        ) {
-            return false;
-        }
 
         return true;
     }
@@ -524,11 +505,6 @@ class Mage_Core_Model_Session_Abstract_Varien extends Varien_Object
         }
 
         $parts[self::VALIDATOR_SESSION_EXPIRE_TIMESTAMP] = time() + $this->getCookie()->getLifetime();
-
-        if (isset($this->_data['visitor_data']['customer_id'])) {
-            $parts[self::VALIDATOR_PASSWORD_CREATE_TIMESTAMP] =
-                Mage::helper('customer')->getPasswordTimestamp($this->_data['visitor_data']['customer_id']);
-        }
 
         return $parts;
     }
