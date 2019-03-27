@@ -1,5 +1,16 @@
 # Magento Community Edition
 
+
+**/// THIS REPOSITORY IS DEPREACTED ///**
+
+1.9.4.1 will be the last version update. Please switch over to [OpenMage](https://openmage.github.io/magento-lts/)!
+
+Either to the [magento-mirror](https://github.com/OpenMage/magento-mirror) (which is the same as this repo) or to [magento-lts](https://github.com/OpenMage/magento-lts), which is a repository with community patches.
+
+**/// THIS REPOSITORY IS DEPREACTED ///**
+
+---
+
 Firegento Magento Community Magento-1.x Mirror Github Repository with Patches.
 
 [Contact us](https://firegento.com/contact/)
